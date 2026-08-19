@@ -1,0 +1,1908 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>13&nbsp; Valor p – Bioestatística Usando o R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./14-teste-t.html" rel="next">
+<link href="./12-estimacao.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Nenhum resultado",
+    "search-matching-documents-text": "documentos correspondentes",
+    "search-copy-link-title": "Copiar link para a busca",
+    "search-hide-matches-text": "Esconder correspondências adicionais",
+    "search-more-match-text": "mais correspondência neste documento",
+    "search-more-matches-text": "mais correspondências neste documento",
+    "search-clear-button-title": "Limpar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Procurar"
+  }
+}</script>
+<link href="site_libs/tabwid-1.1.3/tabwid.css" rel="stylesheet">
+
+<script src="site_libs/tabwid-1.1.3/tabwid.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating slimcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./12-estimacao.html">Módulo V: Inferência Estatística</a></li><li class="breadcrumb-item"><a href="./13-valor_p.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Valor <em>p</em></span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Procurar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Bioestatística Usando o R</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Procurar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefácio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte I: Fundamentos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introdução</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-dados.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Natureza dos Dados</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-producaoDados.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Produção dos Dados</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte II - Ambiente Computacional com R</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-introducaoR.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Introdução ao uso do R</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-manipulacao_dados.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Manipulação dos dados no R</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte III - Estatística Descritiva</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-medidasResumidoras.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Medidas Resumidoras</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-tabelas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Tabelas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-graficos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Gráficos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Módulo IV: Probabilidades e Distribuições</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-probabilidades.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Introdução à Teoria das Probabilidades</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-assimetria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Assimetria e Curtose</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-distAmostrais.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Distribuições Amostrais</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Módulo V: Inferência Estatística</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-estimacao.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Estimação</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-valor_p.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Valor <em>p</em></span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte VI - Testes Paramétricos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-teste-t.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Comparação entre duas médias</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-anova.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análise de Variância</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-anovaRep.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Anova de Medidas Repetidas</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte VII - Relações entre Variáveis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./17-correlacao.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Correlação</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./18-regressao.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Regressão Linear Simples</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte VIII - Métodos Não Paramétricos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./19-dadoscategoricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Análise de Dados Categóricos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-testes-naoParametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Métodos não paramétricos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte IX - Bioestatística Aplicada à Epidemiologia</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./21-testesDiag.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Avaliação de testes diagnósticos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./22-medidasOcorrencia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Medidas de ocorrência de doença</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./23-sobrevida.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Análise de Sobrevida</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Índice</h2>
+   
+  <ul>
+  <li><a href="#probabilidades-no-lançamento-de-moedas" id="toc-probabilidades-no-lançamento-de-moedas" class="nav-link active" data-scroll-target="#probabilidades-no-lançamento-de-moedas"><span class="header-section-number">13.1</span> Probabilidades no lançamento de moedas</a>
+  <ul class="collapse">
+  <li><a href="#lançamento-de-uma-moeda" id="toc-lançamento-de-uma-moeda" class="nav-link" data-scroll-target="#lançamento-de-uma-moeda"><span class="header-section-number">13.1.1</span> Lançamento de uma moeda</a></li>
+  <li><a href="#três-lançamentos-de-uma-moeda-justa" id="toc-três-lançamentos-de-uma-moeda-justa" class="nav-link" data-scroll-target="#três-lançamentos-de-uma-moeda-justa"><span class="header-section-number">13.1.2</span> Três lançamentos de uma moeda justa</a></li>
+  <li><a href="#aumentando-o-número-de-lançamentos-da-moeda" id="toc-aumentando-o-número-de-lançamentos-da-moeda" class="nav-link" data-scroll-target="#aumentando-o-número-de-lançamentos-da-moeda"><span class="header-section-number">13.1.3</span> Aumentando o número de lançamentos da moeda</a></li>
+  <li><a href="#o-que-é-valor-de-p" id="toc-o-que-é-valor-de-p" class="nav-link" data-scroll-target="#o-que-é-valor-de-p"><span class="header-section-number">13.1.4</span> O que é valor de p?</a></li>
+  <li><a href="#sec-erros" id="toc-sec-erros" class="nav-link" data-scroll-target="#sec-erros"><span class="header-section-number">13.1.5</span> Erros de Decisão</a></li>
+  <li><a href="#significância-estatística-versus-relevância-prática" id="toc-significância-estatística-versus-relevância-prática" class="nav-link" data-scroll-target="#significância-estatística-versus-relevância-prática"><span class="header-section-number">13.1.6</span> Significância estatística versus relevância prática</a></li>
+  </ul></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referências</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./12-estimacao.html">Módulo V: Inferência Estatística</a></li><li class="breadcrumb-item"><a href="./13-valor_p.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Valor <em>p</em></span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-valorp" class="quarto-section-identifier"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Valor <em>p</em></span></span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>O <strong>valor <em>p</em></strong> é um dos conceitos mais utilizados — e mais mal interpretados — em estatística <span class="citation" data-cites="goodman2008dirty wasserstein2016asa">(<a href="#ref-goodman2008dirty" role="doc-biblioref">1</a>,<a href="#ref-wasserstein2016asa" role="doc-biblioref">2</a>)</span>. Antes de defini-lo formalmente, vamos construir a intuição necessária a partir de um exemplo simples e concreto: o lançamento de uma moeda. Partindo das probabilidades básicas, chegaremos naturalmente à ideia central por trás de qualquer teste de hipóteses.</p>
+<section id="probabilidades-no-lançamento-de-moedas" class="level2 page-columns page-full" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="probabilidades-no-lançamento-de-moedas"><span class="header-section-number">13.1</span> Probabilidades no lançamento de moedas</h2>
+<section id="lançamento-de-uma-moeda" class="level3 page-columns page-full" data-number="13.1.1">
+<h3 data-number="13.1.1" class="anchored" data-anchor-id="lançamento-de-uma-moeda"><span class="header-section-number">13.1.1</span> Lançamento de uma moeda</h3>
+<p>Ao se lançar uma moeda honesta, não adulterada, a chance de cair <strong>cara</strong><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> é igual a:</p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;Entenda-se, aqui, que o resultado <strong>cara</strong> é igual a <strong>sucesso</strong>.</p></div></div><ul>
+<li>A moeda tem duas faces (<strong>cara</strong> e <strong>coroa</strong>) , logo, a chance é de 1:2 <span class="math inline">\(\to\)</span> <span class="math inline">\(1/2 = 0,50 \to 50\%\)</span></li>
+</ul>
+</section>
+<section id="três-lançamentos-de-uma-moeda-justa" class="level3" data-number="13.1.2">
+<h3 data-number="13.1.2" class="anchored" data-anchor-id="três-lançamentos-de-uma-moeda-justa"><span class="header-section-number">13.1.2</span> Três lançamentos de uma moeda justa</h3>
+<p>Qual a probabilidade de cair três caras?</p>
+<ul>
+<li>8 opções <span class="math inline">\(\to\)</span> <span class="math inline">\(1/8 = 0,125 \to 12,5\%\)</span></li>
+</ul>
+<p>Colocando todas as opções em uma tabela, temos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  Opção <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Ca-Ca-Ca"</span>, <span class="st">"Ca-Ca-Co"</span>, <span class="st">"Ca-Co-Ca"</span>, <span class="st">"Ca-Co-Co"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Co-Ca-Ca"</span>, <span class="st">"Co-Ca-Co"</span>, <span class="st">"Co-Co-Ca"</span>, <span class="st">"Co-Co-Co"</span>),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Caras =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">p     =</span> <span class="fu">rep</span>(<span class="fl">0.125</span>, <span class="dv">8</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flextable</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">align</span>(<span class="at">j =</span> <span class="fu">c</span>(<span class="st">"Caras"</span>, <span class="st">"p"</span>), <span class="at">align =</span> <span class="st">"center"</span>, <span class="at">part =</span> <span class="st">"all"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bg</span>(<span class="at">i =</span> <span class="sc">~</span> Caras <span class="sc">==</span> <span class="dv">3</span>, <span class="at">bg =</span> <span class="st">"gold"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autofit</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="tbl-moeda3" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-moeda3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabela&nbsp;13.1: Probabilidades em 3 lançamentos de uma moeda honesta
+</figcaption>
+<div aria-describedby="tbl-moeda3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<div class="tabwid"><style>.cl-27e6e098{}.cl-27d6d216{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-27db02d2{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-27db02dc{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-27db44d6{width:0.973in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-27db44e0{width:0.693in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-27db44e1{width:0.668in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-27db44e2{width:0.973in;background-color:rgba(255, 215, 0, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-27db44ea{width:0.693in;background-color:rgba(255, 215, 0, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-27db44f4{width:0.668in;background-color:rgba(255, 215, 0, 1.00);vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-27db44f5{width:0.973in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-27db44f6{width:0.693in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-27db44fe{width:0.668in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-27db44ff{width:0.973in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-27db4500{width:0.693in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-27db4508{width:0.668in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-27e6e098"><thead><tr style="overflow-wrap:break-word;"><th class="cl-27db44d6"><p class="cl-27db02d2"><span class="cl-27d6d216">Opção</span></p></th><th class="cl-27db44e0"><p class="cl-27db02dc"><span class="cl-27d6d216">Caras</span></p></th><th class="cl-27db44e1"><p class="cl-27db02dc"><span class="cl-27d6d216">p</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-27db44e2"><p class="cl-27db02d2"><span class="cl-27d6d216">Ca-Ca-Ca</span></p></td><td class="cl-27db44ea"><p class="cl-27db02dc"><span class="cl-27d6d216">3</span></p></td><td class="cl-27db44f4"><p class="cl-27db02dc"><span class="cl-27d6d216">0.125</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-27db44f5"><p class="cl-27db02d2"><span class="cl-27d6d216">Ca-Ca-Co</span></p></td><td class="cl-27db44f6"><p class="cl-27db02dc"><span class="cl-27d6d216">2</span></p></td><td class="cl-27db44fe"><p class="cl-27db02dc"><span class="cl-27d6d216">0.125</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-27db44f5"><p class="cl-27db02d2"><span class="cl-27d6d216">Ca-Co-Ca</span></p></td><td class="cl-27db44f6"><p class="cl-27db02dc"><span class="cl-27d6d216">2</span></p></td><td class="cl-27db44fe"><p class="cl-27db02dc"><span class="cl-27d6d216">0.125</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-27db44f5"><p class="cl-27db02d2"><span class="cl-27d6d216">Ca-Co-Co</span></p></td><td class="cl-27db44f6"><p class="cl-27db02dc"><span class="cl-27d6d216">1</span></p></td><td class="cl-27db44fe"><p class="cl-27db02dc"><span class="cl-27d6d216">0.125</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-27db44f5"><p class="cl-27db02d2"><span class="cl-27d6d216">Co-Ca-Ca</span></p></td><td class="cl-27db44f6"><p class="cl-27db02dc"><span class="cl-27d6d216">2</span></p></td><td class="cl-27db44fe"><p class="cl-27db02dc"><span class="cl-27d6d216">0.125</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-27db44f5"><p class="cl-27db02d2"><span class="cl-27d6d216">Co-Ca-Co</span></p></td><td class="cl-27db44f6"><p class="cl-27db02dc"><span class="cl-27d6d216">1</span></p></td><td class="cl-27db44fe"><p class="cl-27db02dc"><span class="cl-27d6d216">0.125</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-27db44f5"><p class="cl-27db02d2"><span class="cl-27d6d216">Co-Co-Ca</span></p></td><td class="cl-27db44f6"><p class="cl-27db02dc"><span class="cl-27d6d216">1</span></p></td><td class="cl-27db44fe"><p class="cl-27db02dc"><span class="cl-27d6d216">0.125</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-27db44ff"><p class="cl-27db02d2"><span class="cl-27d6d216">Co-Co-Co</span></p></td><td class="cl-27db4500"><p class="cl-27db02dc"><span class="cl-27d6d216">0</span></p></td><td class="cl-27db4508"><p class="cl-27db02dc"><span class="cl-27d6d216">0.125</span></p></td></tr></tbody></table></div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercício 1
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Olhando a <a href="#tbl-moeda3" class="quarto-xref">Tabela&nbsp;<span>13.1</span></a>, qual a probabilidade de cair duas caras em três lançamentos?</li>
+</ol>
+<ul>
+<li>Existem 3 opções onde temos 2 caras (Ca-Ca-Co, Ca-Co-Ca e Co-Ca-Ca)</li>
+<li><span class="math inline">\(0,125 \times 3 = 0,375 \to 37,5\%\)</span></li>
+</ul>
+<ol start="2" type="1">
+<li>Agora, qual a probabilidade de cairem duas ou mais caras?</li>
+</ol>
+<ul>
+<li>As opções são as mesmas anteriores acrescida da opção de três caras</li>
+<li><span class="math inline">\(0,125 \times 4 = 0,50 \to 50\%\)</span></li>
+</ul>
+</div>
+</div>
+<p>Colocando as distribuições da tabela em um gráfico, temos:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">caras =</span> <span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">3</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">p     =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">1</span>) <span class="sc">/</span> <span class="dv">8</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(caras), <span class="at">y =</span> p)) <span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> scales<span class="sc">::</span><span class="fu">percent</span>(p, <span class="at">accuracy =</span> <span class="fl">0.1</span>)), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>))) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Número de caras"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Probabilidade"</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-moeda3" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-moeda3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="13-valor_p_files/figure-html/fig-moeda3-1.png" class="quarto-figure quarto-figure-center figure-img" style="width:70.0%;height:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-moeda3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.1: Distribuição dos 3 lançamentos de uma moeda honesta
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="aumentando-o-número-de-lançamentos-da-moeda" class="level3 page-columns page-full" data-number="13.1.3">
+<h3 data-number="13.1.3" class="anchored" data-anchor-id="aumentando-o-número-de-lançamentos-da-moeda"><span class="header-section-number">13.1.3</span> Aumentando o número de lançamentos da moeda</h3>
+<section id="seis-lançamentos" class="level4" data-number="13.1.3.1">
+<h4 data-number="13.1.3.1" class="anchored" data-anchor-id="seis-lançamentos"><span class="header-section-number">13.1.3.1</span> Seis lançamentos</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dist6 <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="at">x =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">size =</span> <span class="dv">6</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df6 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">caras =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">p =</span> <span class="fu">round</span>(dist6, <span class="dv">3</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Em um gráfico de barras, temos:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df6 <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(caras), <span class="at">y =</span> p)) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> scales<span class="sc">::</span><span class="fu">percent</span>(p, <span class="at">accuracy =</span> <span class="fl">0.1</span>)), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>))) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Número de caras"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Probabilidade"</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-moeda6" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-moeda6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="13-valor_p_files/figure-html/fig-moeda6-1.png" class="quarto-figure quarto-figure-center figure-img" style="height:70.0%" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-moeda6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.2: Distribuição de 6 lançamentos de uma moeda honesta
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="doze-lançamentos" class="level4" data-number="13.1.3.2">
+<h4 data-number="13.1.3.2" class="anchored" data-anchor-id="doze-lançamentos"><span class="header-section-number">13.1.3.2</span> Doze lançamentos</h4>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dist12 <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="at">x =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">size =</span> <span class="dv">12</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df12 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">caras =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">p =</span> <span class="fu">round</span>(dist12, <span class="dv">3</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>df12 <span class="sc">|&gt;</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(caras), <span class="at">y =</span> p)) <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> scales<span class="sc">::</span><span class="fu">percent</span>(p, <span class="at">accuracy =</span> <span class="fl">0.1</span>)), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>))) <span class="sc">+</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Número de caras"</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Probabilidade"</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-moeda12" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-moeda12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="13-valor_p_files/figure-html/fig-moeda12-1.png" class="quarto-figure quarto-figure-center figure-img" style="width:70.0%;height:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-moeda12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.3: Distribuição de 12 lançamentos de uma moeda honesta
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="cinquenta-lançamentos" class="level4 page-columns page-full" data-number="13.1.3.3">
+<h4 data-number="13.1.3.3" class="anchored" data-anchor-id="cinquenta-lançamentos"><span class="header-section-number">13.1.3.3</span> Cinquenta lançamentos</h4>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-moeda50" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-moeda50-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="13-valor_p_files/figure-html/fig-moeda50-1.png" class="quarto-figure quarto-figure-center figure-img" style="width:70.0%;height:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-moeda50-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.4: Distribuição de 50 lançamentos de uma moeda honesta
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercício 2
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Nessa distribuição de probabilidades (<a href="#fig-moeda50" class="quarto-xref">Figura&nbsp;<span>13.4</span></a>), qual é a probabilidade de ocorrer exatamente vinte caras?</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>prob <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="dv">20</span>, <span class="at">size =</span> <span class="dv">50</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span>(prob, <span class="at">scientific =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "0.04185915"</code></pre>
+</div>
+</div>
+<p>Ou seja, uma probabilidade<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> muito pequena, igual 4.185915%.</p>
+<div class="no-row-height column-margin column-container"><div id="fn2"><p><sup>2</sup>&nbsp;Para evitar que a saída apareça em notação científica, usamos a função <code>format(probabilidade, scientific = FALSE)</code></p></div></div><div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercício 3
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Qual a probabilidade de se ter, na distribuição da <a href="#fig-moeda50" class="quarto-xref">Figura&nbsp;<span>13.4</span></a>, ATÉ 20 caras?</p>
+</div>
+</div>
+<p>Se o objetivo é encontrar a probabilidade de ter até 20 caras (ou seja, 0, 1, 2, 3, 4, …, ou 20 sucessos), podemos usar a função de probabilidade acumulada:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>prob_20 <span class="ot">&lt;-</span> <span class="fu">pbinom</span>(<span class="dv">20</span>, <span class="at">size =</span> <span class="dv">50</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span>(prob_20, <span class="at">scientific =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "0.1013194"</code></pre>
+</div>
+</div>
+<p>Ou, como a probabilidade de obter até 20 caras (ou seja, de 0 a 20 sucessos) é a soma exata das probabilidades individuais de sair 0 caras, 1 cara, 2 caras, e assim por diante, até 20 caras, pode ser calculado assim:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">dbinom</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">20</span>, <span class="at">size =</span> <span class="dv">50</span>, <span class="at">prob =</span> <span class="fl">0.5</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1013194</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-moeda20" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-moeda20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="13-valor_p_files/figure-html/fig-moeda20-1.png" class="quarto-figure quarto-figure-center figure-img" style="width:70.0%;height:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-moeda20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.5: Probabilidade acumulada de cair até 20 caras
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercício 4
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Imagine que, em um determinado jogo, cara é “sucesso” e ganha o jogo quem conseguir, em 50 lançamentos, 20 ou menos caras<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> , ou seja, na <a href="#fig-moeda20" class="quarto-xref">Figura&nbsp;<span>13.5</span></a>, o resultado cair na faixa vermelha. Olhando o gráfico, se deduz que banca terá uma chance de 9:1 de sair lucrando! Ou seja, a probabilidade de um jogador ganhar, ao fazer 50 lançamentos de uma moeda, é de aproximadamente 10%.</p>
+<p>Suponha, agora, que neste mesmo jogo, um indivíduo usa a sua moeda na aposta e ganha 3 vezes seguida. O que posso deduzir sobre a honestidade da moeda?</p>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"><div id="fn3"><p><sup>3</sup>&nbsp;Consequentemente, <span class="math inline">\(\ge 30\)</span> coroas.</p></div></div><p>Para ganhar <strong>três vezes seguidas</strong> (assumindo que as rodadas são independentes), multiplicamos as probabilidades:</p>
+<p><span class="math display">\[P(\text{Ganhar 3 vezes}) = 0,1013 \times 0,1013 \times 0,1013 \approx 0,00104\]</span></p>
+<p>Ou seja, a probabilidade de isso acontecer puramente por sorte com uma moeda honesta é de apenas 0,1% (cerca de 1 chance em 1.000).</p>
+<p><u>O que podemos deduzir</u>?</p>
+<p>Em estatística, quando um evento com uma probabilidade tão absurdamente baixa acontece, nós começamos a rejeitar a ideia de que foi “apenas sorte”.</p>
+<p>Considerando a visão frequentista, em um teste de hipóteses normal, as nossas hipóteses estatísticas seriam:</p>
+<blockquote class="blockquote">
+<p><strong>Hipótese Nula</strong> <span class="math inline">\(H_{0}\)</span>: a moeda é honesta<br>
+<strong>Hipóteses Alternativa</strong> <span class="math inline">\(H_{1}\)</span>: a moeda não é honesta</p>
+</blockquote>
+<p>Usando uma confiança de 95%, o nível de significância é de <span class="math inline">\(\alpha = 0.05\)</span> <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>. Dessa forma, rejeita-se <span class="math inline">\(H_{0}\)</span> se a probabilidade encontrada for <span class="math inline">\(\le \alpha = 0.05\)</span>. A probabilidade de ganhar 3 vezes seguidas é de 0,1% (0,001), muito menor que 0,05 e, assim, podemos rejeitar a hipótese (<span class="math inline">\(H_{0}\)</span>) de honestidade da moeda. A moeda provavelmente está alterada para a sair mais coroas (facilitando o resultado de “20 ou menos caras”).</p>
+<div class="no-row-height column-margin column-container"><div id="fn4"><p><sup>4</sup>&nbsp;Essa é a tradição arbitrária, usada em estatística. Ou seja, se a probabilidade for igual a 0,049, se rejeita a hipóteses nula <span class="math inline">\(H_{0}\)</span>; se for 0,051, ela não é rejeitada. Estranho, né? Mas é assim…</p></div></div><p>O dado observado é tão extremo que a explicação de que “a moeda não é honesta” se torna infinitamente mais provável e, se fosse em um cassino, o jogador teria sido convidado a se retirar na terceira rodada!</p>
+</section>
+</section>
+<section id="o-que-é-valor-de-p" class="level3" data-number="13.1.4">
+<h3 data-number="13.1.4" class="anchored" data-anchor-id="o-que-é-valor-de-p"><span class="header-section-number">13.1.4</span> O que é valor de p?</h3>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definição
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>É a probabilidade de observar dados tão ou mais extremos que os encontrados, <strong>caso a hipótese nula seja verdadeira</strong> <span class="citation" data-cites="guyatt1995basic menezes2004hipoteses">(<a href="#ref-guyatt1995basic" role="doc-biblioref">3</a>,<a href="#ref-menezes2004hipoteses" role="doc-biblioref">4</a>)</span>.</p>
+</div>
+</div>
+<section id="conectando-com-o-exemplo" class="level4" data-number="13.1.4.1">
+<h4 data-number="13.1.4.1" class="anchored" data-anchor-id="conectando-com-o-exemplo"><span class="header-section-number">13.1.4.1</span> Conectando com o exemplo</h4>
+<p>No exemplo, o valor <em>p</em> = 0,001 significa: <em>“se a moeda fosse honesta (</em><span class="math inline">\(H_0\)</span> verdadeira), a probabilidade de um jogador ganhar 3 vezes seguidas seria de apenas 0,1%“. Como esse valor é menor que <span class="math inline">\(\alpha = 0{,}05\)</span>, rejeita-se <span class="math inline">\(H_0\)</span> e concluí-se que a moeda provavelmente está adulterada.</p>
+<p>A função da estatística termina aqui. A decisão final cabe ao pesquisador: rejeitar ou não <span class="math inline">\(H_0\)</span> deve sempre estar apoiado em uma fundamentação teórica — não apenas no valor <em>p</em> isolado.</p>
+</section>
+<section id="o-que-o-valor-p-não-é" class="level4" data-number="13.1.4.2">
+<h4 data-number="13.1.4.2" class="anchored" data-anchor-id="o-que-o-valor-p-não-é"><span class="header-section-number">13.1.4.2</span> O que o valor <em>p</em> <strong>não</strong> é</h4>
+<p>As interpretações equivocadas do valor <em>p</em> são extremamente comuns <span class="citation" data-cites="goodman2008dirty wasserstein2016asa">(<a href="#ref-goodman2008dirty" role="doc-biblioref">1</a>,<a href="#ref-wasserstein2016asa" role="doc-biblioref">2</a>)</span>. É tão importante saber o que ele <strong>não</strong> representa quanto a sua definição formal:</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretações incorretas do valor <em>p</em>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p><strong>Não é</strong> a probabilidade de <span class="math inline">\(H_0\)</span> ser verdadeira. Um valor <em>p</em> = 0,001 <strong>não</strong> significa que há 99,9% de chance de a moeda estar adulterada — o valor <em>p</em> nada diz sobre a probabilidade de uma hipótese ser ou não verdadeira.</p></li>
+<li><p><strong>Não é</strong> a probabilidade de o resultado ter ocorrido por acaso. É a probabilidade de <em>resultados tão ou mais extremos</em> ocorrerem, <em>supondo</em> que <span class="math inline">\(H_0\)</span> é verdadeira — uma distinção sutil, mas fundamental.</p></li>
+<li><p><strong>Não mede</strong> a importância ou o tamanho do efeito. Um valor <em>p</em> muito pequeno pode resultar simplesmente de uma amostra grande, mesmo que o efeito prático seja irrelevante. Sempre avalie a magnitude do efeito separadamente.</p></li>
+<li><p><strong>Não garante</strong> replicação. Um resultado com <em>p</em> &lt; 0,05 não significa que o mesmo achado se repetirá em um novo estudo.</p></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="resumindo" class="level4" data-number="13.1.4.3">
+<h4 data-number="13.1.4.3" class="anchored" data-anchor-id="resumindo"><span class="header-section-number">13.1.4.3</span> Resumindo</h4>
+<p>O valor <em>p</em> é uma <strong>ferramenta de decisão</strong>, não uma medida de verdade. Ele informa se os dados observados são compatíveis com a hipótese nula — e, quando não são, ele autoriza a rejeitá-la com um grau de confiança pré-estabelecido. A interpretação final, porém, depende sempre do contexto, da teoria e do julgamento do pesquisador.</p>
+</section>
+</section>
+<section id="sec-erros" class="level3" data-number="13.1.5">
+<h3 data-number="13.1.5" class="anchored" data-anchor-id="sec-erros"><span class="header-section-number">13.1.5</span> Erros de Decisão</h3>
+<p>Nessa tomada de decisão, <em>erros</em> são cometidos, por exemplo, pode-se rejeitar uma hipótese nula verdadeira. Nesse caso, tem-se um resultado <em>falso positivo</em>, conclui-se que existe um efeito quando na verdade ele não existe. Este erro é denominado de <strong>erro tipo I</strong> e a probabilidade de se cometer esse tipo de erro é denominado de <span class="math inline">\(\alpha\)</span>.</p>
+<p><span class="math display">\[P(rejeitar \quad H_{0}|H_{0} \quad verdadeira) = \alpha\]</span></p>
+<p>Outra possibilidade de erro é quando não se rejeita uma hipótese nula falsa. É o erro denominado de erro tipo II. Nesse caso, tem-se um <em>falso negativo</em>; não se conseguiu encontrar um efeito que realmente existe. A probabilidade de cometer esse tipo de erro é chamada de <span class="math inline">\(\beta\)</span>.</p>
+<p><span class="math display">\[P(não \quad rejeitar \quad H_{0}|H_{0} \quad falsa) = \beta\]</span></p>
+<p>Na <a href="#fig-erros" class="quarto-xref">Figura&nbsp;<span>13.6</span></a> estão resumidas as possíveis consequências na tomada de decisão em um teste de hipótese <span class="citation" data-cites="fletcher2014acaso">(<a href="#ref-fletcher2014acaso" role="doc-biblioref">5</a>)</span>.</p>
+<div id="fig-erros" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-erros-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/erros_decisao.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:14cm">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-erros-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.6: Erros na tomada de decisão
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="significância-estatística-versus-relevância-prática" class="level3 page-columns page-full" data-number="13.1.6">
+<h3 data-number="13.1.6" class="anchored" data-anchor-id="significância-estatística-versus-relevância-prática"><span class="header-section-number">13.1.6</span> Significância estatística versus relevância prática</h3>
+<p>Rejeitar <span class="math inline">\(H_0\)</span> não significa, necessariamente, que o efeito encontrado seja importante. Essa é uma das armadilhas mais comuns na interpretação de resultados estatísticos.</p>
+<p>O valor <em>p</em> depende de <strong>dois fatores</strong>: o tamanho do efeito e o tamanho da amostra. Com amostras muito grandes, até diferenças minúsculas e sem nenhum significado prático produzem valores <em>p</em> extremamente pequenos.</p>
+<section id="um-exemplo-com-a-moeda" class="level4" data-number="13.1.6.1">
+<h4 data-number="13.1.6.1" class="anchored" data-anchor-id="um-exemplo-com-a-moeda"><span class="header-section-number">13.1.6.1</span> Um exemplo com a moeda</h4>
+<p>Imagine que, ao invés de uma moeda completamente honesta, temos uma moeda com um viés muito sutil: a probabilidade de cara é 0,51 em vez de 0,50 — uma diferença de apenas 1 ponto percentual. Na prática, em qualquer jogo humano, essa diferença seria imperceptível.</p>
+<p>O que acontece ao testar essa moeda com amostras de tamanhos diferentes?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">n         =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">500</span>, <span class="dv">1000</span>, <span class="dv">5000</span>, <span class="dv">10000</span>, <span class="dv">100000</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">caras     =</span> <span class="fu">round</span>(n <span class="sc">*</span> <span class="fl">0.51</span>),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">valor_p   =</span> <span class="fu">map_dbl</span>(n, \(x) <span class="fu">binom.test</span>(<span class="fu">round</span>(x <span class="sc">*</span> <span class="fl">0.51</span>), x, <span class="at">p =</span> <span class="fl">0.5</span>)<span class="sc">$</span>p.value),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">diferenca =</span> <span class="fl">0.51</span> <span class="sc">-</span> <span class="fl">0.50</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">n         =</span> <span class="fu">format</span>(n, <span class="at">big.mark =</span> <span class="st">""</span>, <span class="at">scientific =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">caras     =</span> <span class="fu">format</span>(caras, <span class="at">big.mark =</span> <span class="st">""</span>, <span class="at">scientific =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">valor_p   =</span> <span class="fu">format</span>(<span class="fu">round</span>(valor_p, <span class="dv">4</span>), <span class="at">scientific =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">diferenca =</span> scales<span class="sc">::</span><span class="fu">percent</span>(diferenca, <span class="at">accuracy =</span> <span class="fl">0.1</span>)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Lançamentos (n)</span><span class="st">`</span> <span class="ot">=</span> n,</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Caras observadas</span><span class="st">`</span> <span class="ot">=</span> caras,</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Valor p</span><span class="st">`</span>          <span class="ot">=</span> valor_p,</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Diferença real</span><span class="st">`</span>   <span class="ot">=</span> diferenca</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flextable</span>() <span class="sc">|&gt;</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">align</span>(<span class="at">align =</span> <span class="st">"center"</span>, <span class="at">part =</span> <span class="st">"all"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autofit</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="tbl-efeito" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-efeito-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabela&nbsp;13.2: Valor p e tamanho do efeito para diferentes tamanhos de amostra (P(cara) = 0,51)
+</figcaption>
+<div aria-describedby="tbl-efeito-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<div class="tabwid"><style>.cl-294d9daa{}.cl-293c3196{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-29441bb8{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-2944704a{width:1.432in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-29447054{width:1.525in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-2944705e{width:0.769in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-29447068{width:1.236in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-29447072{width:1.432in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-29447073{width:1.525in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-2944707c{width:0.769in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-29447086{width:1.236in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-29447087{width:1.432in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-29447090{width:1.525in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-29447091{width:0.769in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-2944709a{width:1.236in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-294d9daa"><thead><tr style="overflow-wrap:break-word;"><th class="cl-2944704a"><p class="cl-29441bb8"><span class="cl-293c3196">Lançamentos (n)</span></p></th><th class="cl-29447054"><p class="cl-29441bb8"><span class="cl-293c3196">Caras observadas</span></p></th><th class="cl-2944705e"><p class="cl-29441bb8"><span class="cl-293c3196">Valor p</span></p></th><th class="cl-29447068"><p class="cl-29441bb8"><span class="cl-293c3196">Diferença real</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-29447072"><p class="cl-29441bb8"><span class="cl-293c3196">   100</span></p></td><td class="cl-29447073"><p class="cl-29441bb8"><span class="cl-293c3196">   51</span></p></td><td class="cl-2944707c"><p class="cl-29441bb8"><span class="cl-293c3196">0.9204</span></p></td><td class="cl-29447086"><p class="cl-29441bb8"><span class="cl-293c3196">1.0%</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-29447072"><p class="cl-29441bb8"><span class="cl-293c3196">   500</span></p></td><td class="cl-29447073"><p class="cl-29441bb8"><span class="cl-293c3196">  255</span></p></td><td class="cl-2944707c"><p class="cl-29441bb8"><span class="cl-293c3196">0.6874</span></p></td><td class="cl-29447086"><p class="cl-29441bb8"><span class="cl-293c3196">1.0%</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-29447072"><p class="cl-29441bb8"><span class="cl-293c3196">  1000</span></p></td><td class="cl-29447073"><p class="cl-29441bb8"><span class="cl-293c3196">  510</span></p></td><td class="cl-2944707c"><p class="cl-29441bb8"><span class="cl-293c3196">0.5480</span></p></td><td class="cl-29447086"><p class="cl-29441bb8"><span class="cl-293c3196">1.0%</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-29447072"><p class="cl-29441bb8"><span class="cl-293c3196">  5000</span></p></td><td class="cl-29447073"><p class="cl-29441bb8"><span class="cl-293c3196"> 2550</span></p></td><td class="cl-2944707c"><p class="cl-29441bb8"><span class="cl-293c3196">0.1615</span></p></td><td class="cl-29447086"><p class="cl-29441bb8"><span class="cl-293c3196">1.0%</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-29447072"><p class="cl-29441bb8"><span class="cl-293c3196"> 10000</span></p></td><td class="cl-29447073"><p class="cl-29441bb8"><span class="cl-293c3196"> 5100</span></p></td><td class="cl-2944707c"><p class="cl-29441bb8"><span class="cl-293c3196">0.0466</span></p></td><td class="cl-29447086"><p class="cl-29441bb8"><span class="cl-293c3196">1.0%</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-29447087"><p class="cl-29441bb8"><span class="cl-293c3196">100000</span></p></td><td class="cl-29447090"><p class="cl-29441bb8"><span class="cl-293c3196">51000</span></p></td><td class="cl-29447091"><p class="cl-29441bb8"><span class="cl-293c3196">0.0000</span></p></td><td class="cl-2944709a"><p class="cl-29441bb8"><span class="cl-293c3196">1.0%</span></p></td></tr></tbody></table></div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Observe que a <strong>diferença real entre a moeda viciada e a honesta é sempre a mesma</strong>: 1 ponto percentual. O que muda é apenas o número de lançamentos. Com 100 lançamentos, o teste não detecta nada. Com 100.000 lançamentos, o <em>p</em> é minúsculo — mesmo que a moeda seja praticamente honesta para qualquer fim prático.</p>
+</section>
+<section id="tamanho-do-efeito" class="level4" data-number="13.1.6.2">
+<h4 data-number="13.1.6.2" class="anchored" data-anchor-id="tamanho-do-efeito"><span class="header-section-number">13.1.6.2</span> Tamanho do efeito</h4>
+<p>Para complementar o valor <em>p</em>, devemos sempre reportar uma medida de <strong>tamanho do efeito</strong> (<em>effect size</em>) — uma quantidade que descreve a <em>magnitude</em> da diferença, independentemente do tamanho da amostra. Para proporções, as medidas mais comuns são:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Medida</th>
+<th>O que representa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Diferença de proporções</td>
+<td><span class="math inline">\(\hat{p} - p_0\)</span> — a mais intuitiva; no exemplo, vale 0,01</td>
+</tr>
+<tr class="even">
+<td><em>h</em> de Cohen</td>
+<td>Diferença padronizada entre proporções; <span class="math inline">\(&lt; 0{,}2\)</span> é considerado efeito pequeno <span class="citation" data-cites="cohen1992quantitative">(<a href="#ref-cohen1992quantitative" role="doc-biblioref">6</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>Razão de chances (<em>odds ratio</em>)</td>
+<td>Quanto maior a chance de um evento em relação ao outro</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Regra prática
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sempre apresente o valor <em>p</em> <strong>junto</strong> com uma medida de tamanho do efeito e os intervalos de confiança. Um resultado pode ser estatisticamente significante e praticamente irrelevante — ou vice-versa.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+O paradoxo inverso: efeito grande, amostra pequena
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O problema oposto também existe. Com amostras muito pequenas, um efeito real e expressivo pode não atingir significância estatística — não porque o efeito inexista, mas porque o estudo não tem <strong>poder estatístico</strong> suficiente para detectá-lo.</p>
+<p>Imagine uma moeda com viés intenso: P(cara) = 0,70. Em apenas 10 lançamentos, observamos 7 caras — exatamente o esperado para essa moeda. O teste, porém, não rejeita <span class="math inline">\(H_0\)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(<span class="dv">7</span>, <span class="dv">10</span>, <span class="at">p =</span> <span class="fl">0.5</span>)<span class="sc">$</span>p.value</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.34375</code></pre>
+</div>
+</div>
+<p>O valor <em>p</em> é de aproximadamente 0,34 — muito acima de 0,05. Ainda assim, a moeda tem um viés real de <strong>20 pontos percentuais</strong> em relação a uma moeda honesta. A amostra simplesmente é pequena demais para distinguir esse efeito do acaso.</p>
+<p>Concluir que <em>“não há efeito”</em> com base em p &gt; 0,05 em uma amostra pequena é um erro tão grave quanto ignorar a magnitude do efeito em amostras grandes. <strong>A ausência de significância estatística não é a mesma coisa que ausência de efeito.</strong></p>
+</div>
+</div>
+</section>
+<section id="poder-estatístico" class="level4 page-columns page-full" data-number="13.1.6.3">
+<h4 data-number="13.1.6.3" class="anchored" data-anchor-id="poder-estatístico"><span class="header-section-number">13.1.6.3</span> Poder estatístico</h4>
+<p>O <strong>poder estatístico</strong> de um teste é a probabilidade de rejeitar corretamente <span class="math inline">\(H_0\)</span> quando ela é de fato falsa — ou seja, a capacidade do estudo de detectar um efeito real quando ele existe:</p>
+<p><span class="math display">\[\text{Poder} = 1 - \beta\]</span></p>
+<p>onde <span class="math inline">\(\beta\)</span> é a probabilidade de <strong>erro do tipo II</strong>: não rejeitar <span class="math inline">\(H_0\)</span> quando ela deveria ser rejeitada (@fig-power).</p>
+<p>Por convenção, busca-se um poder mínimo de 80% no planejamento de estudos <span class="citation" data-cites="cohen1988power">(<a href="#ref-cohen1988power" role="doc-biblioref">7</a>)</span>.</p>
+<p>No exemplo da moeda viciada (P(cara) = 0,70, <span class="math inline">\(n\)</span> = 10), o poder pode ser calculado com o pacote <code>pwr</code> <span class="citation" data-cites="champely2020pwr">(<a href="#ref-champely2020pwr" role="doc-biblioref">8</a>)</span><a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>:</p>
+<div class="no-row-height column-margin column-container"><div id="fn5"><p><sup>5</sup>&nbsp;A função <code>pwr.p.test()</code> é usada para testes de <strong>uma proporção</strong> (como o teste da moeda). Quando o objetivo é comparar <strong>duas proporções independentes</strong> — por exemplo, a taxa de sucesso de dois tratamentos —, a função equivalente é <code>pwr.2p.test()</code>, com a mesma estrutura de argumentos.</p></div></div><div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pwr)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">pwr.p.test</span>(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">h         =</span> <span class="fu">ES.h</span>(<span class="at">p1 =</span> <span class="fl">0.70</span>, <span class="at">p2 =</span> <span class="fl">0.50</span>),  <span class="co"># h de Cohen para proporções</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">n         =</span> <span class="dv">10</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sig.level =</span> <span class="fl">0.05</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     proportion power calculation for binomial distribution (arcsine transformation) 
+
+              h = 0.4115168
+              n = 10
+      sig.level = 0.05
+          power = 0.2556201
+    alternative = two.sided</code></pre>
+</div>
+</div>
+<p>Com apenas 10 lançamentos, o poder é de <strong>~26%</strong>: em cerca de 3 a cada 4 experimentos, o teste falharia em detectar a moeda viciada, mesmo com um viés de 20 pontos percentuais.</p>
+<p>Para descobrir quantos lançamentos seriam necessários para atingir 80% de poder, deixamos <code>n</code> em aberto e fornecemos o poder desejado:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pwr.p.test</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">h         =</span> <span class="fu">ES.h</span>(<span class="at">p1 =</span> <span class="fl">0.70</span>, <span class="at">p2 =</span> <span class="fl">0.50</span>),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sig.level =</span> <span class="fl">0.05</span>,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">power     =</span> <span class="fl">0.80</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     proportion power calculation for binomial distribution (arcsine transformation) 
+
+              h = 0.4115168
+              n = 46.34804
+      sig.level = 0.05
+          power = 0.8
+    alternative = two.sided</code></pre>
+</div>
+</div>
+<p>Seriam necessários <strong>47 lançamentos</strong> para ter 80% de chance de detectar o viés. Com apenas 10, o estudo estava seriamente subdimensionado.</p>
+<p>No exemplo da moeda, um pesquisador responsável diria: <em>“O teste foi significante (p &lt; 0,05), mas a diferença estimada é de apenas 1 ponto percentual, sem relevância prática para o contexto estudado.”</em> Já em um estudo com amostra pequena, o correto seria: <em>“O teste não atingiu significância (p = 0,34), mas o efeito estimado é de 20 pontos percentuais — uma amostra maior seria necessária para confirmar ou descartar esse achado.”</em></p>
+<div id="fig-power" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-power-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/poder.png" class="img-fluid figure-img" style="width:15cm">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-power-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;13.7: Poder Estatístico
+</figcaption>
+</figure>
+</div>
+
+
+<!-- -->
+
+</section>
+</section>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referências</h1>
+<div id="refs" class="references csl-bib-body" role="list">
+<div id="ref-goodman2008dirty" class="csl-entry" role="listitem">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Goodman S. <a href="https://doi.org/10.1053/j.seminhematol.2008.04.003">A dirty dozen: twelve p-value misconceptions</a>. Seminars in Hematology. 2008;45(3):135–40. </div>
+</div>
+<div id="ref-wasserstein2016asa" class="csl-entry" role="listitem">
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">Wasserstein RL, Lazar NA. <a href="https://doi.org/10.1080/00031305.2016.1154108">The <span>ASA</span> statement on p-values: context, process, and purpose</a>. The American Statistician. 2016;70(2):129–33. </div>
+</div>
+<div id="ref-guyatt1995basic" class="csl-entry" role="listitem">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Guyatt G, Jaeschke R, Heddle N, et al. Basic statistics for clinicians: 1. Hypothesis testing. CMAJ: Canadian Medical Association Journal. 1995;152(1):27. </div>
+</div>
+<div id="ref-menezes2004hipoteses" class="csl-entry" role="listitem">
+<div class="csl-left-margin">4. </div><div class="csl-right-inline">Menezes RX de, Burattini MN. Testes de Hipótese e intervalos de Confiança. Em: Massad E, Menezes RX de, Silveira PSP, Ortega NRS, editores. Métodos Quantitativos em Medicina. Barueri, São Paulo: Editora Manole Ltda.; 2004. p. 225–41. </div>
+</div>
+<div id="ref-fletcher2014acaso" class="csl-entry" role="listitem">
+<div class="csl-left-margin">5. </div><div class="csl-right-inline">Fletcher RH, Fletcher SW, Fletcher GS. Acaso. Em: Epidemiologia Clínica: Elementos Essenciais. Quinta Edição. Artmed Editora; 2014. p. 108–9. </div>
+</div>
+<div id="ref-cohen1992quantitative" class="csl-entry" role="listitem">
+<div class="csl-left-margin">6. </div><div class="csl-right-inline">Cohen J. Quantitative methods in psychology: A power primer. Psychol Bull. 1992;112:1155–9. </div>
+</div>
+<div id="ref-cohen1988power" class="csl-entry" role="listitem">
+<div class="csl-left-margin">7. </div><div class="csl-right-inline">Cohen J. Statistical power analysis for the behavioral sciences. 2nd Edition. Routledge; 1988. </div>
+</div>
+<div id="ref-champely2020pwr" class="csl-entry" role="listitem">
+<div class="csl-left-margin">8. </div><div class="csl-right-inline">Champely S. pwr: Basic Functions for Power Analysis [Internet]. 2020. Disponível em: <a href="https://CRAN.R-project.org/package=pwr">https://CRAN.R-project.org/package=pwr</a></div>
+</div>
+</div>
+</section>
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiada");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiada");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./12-estimacao.html" class="pagination-link" aria-label="Estimação">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Estimação</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./14-teste-t.html" class="pagination-link" aria-label="Comparação entre duas médias">
+        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Comparação entre duas médias</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Código fonte</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb19" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Valor *p* {#sec-valorp}</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flextable)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>O **valor *p*** é um dos conceitos mais utilizados — e mais mal interpretados — em estatística <span class="co">[</span><span class="ot">@goodman2008dirty; @wasserstein2016asa</span><span class="co">]</span>. Antes de defini-lo formalmente, vamos construir a intuição necessária a partir de um exemplo simples e concreto: o lançamento de uma moeda. Partindo das probabilidades básicas, chegaremos naturalmente à ideia central por trás de qualquer teste de hipóteses.</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Probabilidades no lançamento de moedas</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="fu">### Lançamento de uma moeda</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>Ao se lançar uma moeda honesta, não adulterada, a chance de cair **cara**<span class="ot">[^13-valor_p-1]</span> é igual a:</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="ot">[^13-valor_p-1]: </span>Entenda-se, aqui, que o resultado **cara** é igual a **sucesso**.</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A moeda tem duas faces (**cara** e **coroa**) , logo, a chance é de 1:2 $\to$ $1/2 = 0,50 \to 50\%$</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="fu">### Três lançamentos de uma moeda justa</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>Qual a probabilidade de cair três caras?</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>8 opções $\to$ $1/8 = 0,125 \to 12,5\%$</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>Colocando todas as opções em uma tabela, temos:</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-moeda3</span></span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Probabilidades em 3 lançamentos de uma moeda honesta"</span></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>  Opção <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Ca-Ca-Ca"</span>, <span class="st">"Ca-Ca-Co"</span>, <span class="st">"Ca-Co-Ca"</span>, <span class="st">"Ca-Co-Co"</span>,</span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Co-Ca-Ca"</span>, <span class="st">"Co-Ca-Co"</span>, <span class="st">"Co-Co-Ca"</span>, <span class="st">"Co-Co-Co"</span>),</span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">Caras =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">p     =</span> <span class="fu">rep</span>(<span class="fl">0.125</span>, <span class="dv">8</span>)</span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flextable</span>() <span class="sc">|&gt;</span></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">align</span>(<span class="at">j =</span> <span class="fu">c</span>(<span class="st">"Caras"</span>, <span class="st">"p"</span>), <span class="at">align =</span> <span class="st">"center"</span>, <span class="at">part =</span> <span class="st">"all"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bg</span>(<span class="at">i =</span> <span class="sc">~</span> Caras <span class="sc">==</span> <span class="dv">3</span>, <span class="at">bg =</span> <span class="st">"gold"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autofit</span>()</span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercício 1</span></span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>1)  Olhando a @tbl-moeda3, qual a probabilidade de cair duas caras em três lançamentos?</span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Existem 3 opções onde temos 2 caras (Ca-Ca-Co, Ca-Co-Ca e Co-Ca-Ca)</span>
+<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$0,125 \times 3 = 0,375 \to 37,5\%$</span>
+<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a>2)  Agora, qual a probabilidade de cairem duas ou mais caras?</span>
+<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>As opções são as mesmas anteriores acrescida da opção de três caras</span>
+<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$0,125 \times 4 = 0,50 \to 50\%$</span>
+<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a>Colocando as distribuições da tabela em um gráfico, temos:</span>
+<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-height: "70%"</span></span>
+<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-align: 'center'</span></span>
+<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-moeda3</span></span>
+<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribuição dos 3 lançamentos de uma moeda honesta"</span></span>
+<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">caras =</span> <span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">3</span>),</span>
+<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">p     =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">1</span>) <span class="sc">/</span> <span class="dv">8</span></span>
+<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(caras), <span class="at">y =</span> p)) <span class="sc">+</span></span>
+<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> scales<span class="sc">::</span><span class="fu">percent</span>(p, <span class="at">accuracy =</span> <span class="fl">0.1</span>)), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>))) <span class="sc">+</span></span>
+<span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Número de caras"</span>,</span>
+<span id="cb19-85"><a href="#cb19-85" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Probabilidade"</span></span>
+<span id="cb19-86"><a href="#cb19-86" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-87"><a href="#cb19-87" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb19-88"><a href="#cb19-88" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a><span class="fu">### Aumentando o número de lançamentos da moeda</span></span>
+<span id="cb19-91"><a href="#cb19-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Seis lançamentos</span></span>
+<span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-96"><a href="#cb19-96" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-97"><a href="#cb19-97" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb19-98"><a href="#cb19-98" aria-hidden="true" tabindex="-1"></a>dist6 <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="at">x =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">size =</span> <span class="dv">6</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb19-99"><a href="#cb19-99" aria-hidden="true" tabindex="-1"></a>df6 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">caras =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">p =</span> <span class="fu">round</span>(dist6, <span class="dv">3</span>))</span>
+<span id="cb19-100"><a href="#cb19-100" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a>Em um gráfico de barras, temos:</span>
+<span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-106"><a href="#cb19-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-107"><a href="#cb19-107" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-moeda6</span></span>
+<span id="cb19-108"><a href="#cb19-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribuição de 6 lançamentos de uma moeda honesta"</span></span>
+<span id="cb19-109"><a href="#cb19-109" aria-hidden="true" tabindex="-1"></a><span class="co">#| #| out-width: "70%"</span></span>
+<span id="cb19-110"><a href="#cb19-110" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-height: "70%"</span></span>
+<span id="cb19-111"><a href="#cb19-111" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-align: 'center'</span></span>
+<span id="cb19-112"><a href="#cb19-112" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-113"><a href="#cb19-113" aria-hidden="true" tabindex="-1"></a>df6 <span class="sc">|&gt;</span> </span>
+<span id="cb19-114"><a href="#cb19-114" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(caras), <span class="at">y =</span> p)) <span class="sc">+</span></span>
+<span id="cb19-115"><a href="#cb19-115" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> scales<span class="sc">::</span><span class="fu">percent</span>(p, <span class="at">accuracy =</span> <span class="fl">0.1</span>)), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>))) <span class="sc">+</span></span>
+<span id="cb19-118"><a href="#cb19-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Número de caras"</span>,</span>
+<span id="cb19-120"><a href="#cb19-120" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Probabilidade"</span></span>
+<span id="cb19-121"><a href="#cb19-121" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-122"><a href="#cb19-122" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb19-123"><a href="#cb19-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-124"><a href="#cb19-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-125"><a href="#cb19-125" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Doze lançamentos</span></span>
+<span id="cb19-126"><a href="#cb19-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-129"><a href="#cb19-129" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-130"><a href="#cb19-130" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb19-131"><a href="#cb19-131" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-132"><a href="#cb19-132" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-133"><a href="#cb19-133" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-height: "70%"</span></span>
+<span id="cb19-134"><a href="#cb19-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-align: 'center'</span></span>
+<span id="cb19-135"><a href="#cb19-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-moeda12</span></span>
+<span id="cb19-136"><a href="#cb19-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribuição de 12 lançamentos de uma moeda honesta"</span></span>
+<span id="cb19-137"><a href="#cb19-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-138"><a href="#cb19-138" aria-hidden="true" tabindex="-1"></a>dist12 <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="at">x =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">size =</span> <span class="dv">12</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb19-139"><a href="#cb19-139" aria-hidden="true" tabindex="-1"></a>df12 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">caras =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">p =</span> <span class="fu">round</span>(dist12, <span class="dv">3</span>))</span>
+<span id="cb19-140"><a href="#cb19-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-141"><a href="#cb19-141" aria-hidden="true" tabindex="-1"></a>df12 <span class="sc">|&gt;</span> </span>
+<span id="cb19-142"><a href="#cb19-142" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(caras), <span class="at">y =</span> p)) <span class="sc">+</span></span>
+<span id="cb19-143"><a href="#cb19-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb19-144"><a href="#cb19-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> scales<span class="sc">::</span><span class="fu">percent</span>(p, <span class="at">accuracy =</span> <span class="fl">0.1</span>)), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb19-145"><a href="#cb19-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>))) <span class="sc">+</span></span>
+<span id="cb19-146"><a href="#cb19-146" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb19-147"><a href="#cb19-147" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Número de caras"</span>,</span>
+<span id="cb19-148"><a href="#cb19-148" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Probabilidade"</span></span>
+<span id="cb19-149"><a href="#cb19-149" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-150"><a href="#cb19-150" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb19-151"><a href="#cb19-151" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-152"><a href="#cb19-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-153"><a href="#cb19-153" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Cinquenta lançamentos</span></span>
+<span id="cb19-154"><a href="#cb19-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-157"><a href="#cb19-157" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-158"><a href="#cb19-158" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb19-159"><a href="#cb19-159" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-160"><a href="#cb19-160" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-161"><a href="#cb19-161" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-height: "70%"</span></span>
+<span id="cb19-162"><a href="#cb19-162" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-align: 'center'</span></span>
+<span id="cb19-163"><a href="#cb19-163" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-moeda50</span></span>
+<span id="cb19-164"><a href="#cb19-164" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribuição de 50 lançamentos de uma moeda honesta"</span></span>
+<span id="cb19-165"><a href="#cb19-165" aria-hidden="true" tabindex="-1"></a>dist50 <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="at">x =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">50</span>, <span class="at">size =</span> <span class="dv">50</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb19-166"><a href="#cb19-166" aria-hidden="true" tabindex="-1"></a>df50 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">caras =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">50</span>, <span class="at">p =</span> <span class="fu">round</span>(dist50, <span class="dv">3</span>))</span>
+<span id="cb19-167"><a href="#cb19-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-168"><a href="#cb19-168" aria-hidden="true" tabindex="-1"></a>df50 <span class="sc">|&gt;</span> </span>
+<span id="cb19-169"><a href="#cb19-169" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(caras), <span class="at">y =</span> p)) <span class="sc">+</span></span>
+<span id="cb19-170"><a href="#cb19-170" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb19-171"><a href="#cb19-171" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">50</span>, <span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb19-172"><a href="#cb19-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>))) <span class="sc">+</span></span>
+<span id="cb19-173"><a href="#cb19-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb19-174"><a href="#cb19-174" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Número de caras"</span>,</span>
+<span id="cb19-175"><a href="#cb19-175" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Probabilidade"</span></span>
+<span id="cb19-176"><a href="#cb19-176" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-177"><a href="#cb19-177" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb19-178"><a href="#cb19-178" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-179"><a href="#cb19-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-180"><a href="#cb19-180" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb19-181"><a href="#cb19-181" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercício 2</span></span>
+<span id="cb19-182"><a href="#cb19-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-183"><a href="#cb19-183" aria-hidden="true" tabindex="-1"></a>Nessa distribuição de probabilidades (@fig-moeda50), qual é a probabilidade de ocorrer exatamente vinte caras?</span>
+<span id="cb19-184"><a href="#cb19-184" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-185"><a href="#cb19-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-188"><a href="#cb19-188" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-189"><a href="#cb19-189" aria-hidden="true" tabindex="-1"></a>prob <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="dv">20</span>, <span class="at">size =</span> <span class="dv">50</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb19-190"><a href="#cb19-190" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span>(prob, <span class="at">scientific =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-191"><a href="#cb19-191" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-192"><a href="#cb19-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-193"><a href="#cb19-193" aria-hidden="true" tabindex="-1"></a>Ou seja, uma probabilidade<span class="ot">[^13-valor_p-2]</span> muito pequena, igual <span class="in">`r format(prob * 100, scientific = FALSE)`</span>%.</span>
+<span id="cb19-194"><a href="#cb19-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-195"><a href="#cb19-195" aria-hidden="true" tabindex="-1"></a><span class="ot">[^13-valor_p-2]: </span>Para evitar que a saída apareça em notação científica, usamos a função <span class="in">`format(probabilidade, scientific = FALSE)`</span></span>
+<span id="cb19-196"><a href="#cb19-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-197"><a href="#cb19-197" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb19-198"><a href="#cb19-198" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercício 3</span></span>
+<span id="cb19-199"><a href="#cb19-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-200"><a href="#cb19-200" aria-hidden="true" tabindex="-1"></a>Qual a probabilidade de se ter, na distribuição da @fig-moeda50, ATÉ 20 caras?</span>
+<span id="cb19-201"><a href="#cb19-201" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-202"><a href="#cb19-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-203"><a href="#cb19-203" aria-hidden="true" tabindex="-1"></a>Se o objetivo é encontrar a probabilidade de ter até 20 caras (ou seja, 0, 1, 2, 3, 4, ..., ou 20 sucessos), podemos usar a função de probabilidade acumulada:</span>
+<span id="cb19-204"><a href="#cb19-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-207"><a href="#cb19-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-208"><a href="#cb19-208" aria-hidden="true" tabindex="-1"></a>prob_20 <span class="ot">&lt;-</span> <span class="fu">pbinom</span>(<span class="dv">20</span>, <span class="at">size =</span> <span class="dv">50</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb19-209"><a href="#cb19-209" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span>(prob_20, <span class="at">scientific =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-210"><a href="#cb19-210" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-211"><a href="#cb19-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-212"><a href="#cb19-212" aria-hidden="true" tabindex="-1"></a>Ou, como a probabilidade de obter até 20 caras (ou seja, de 0 a 20 sucessos) é a soma exata das probabilidades individuais de sair 0 caras, 1 cara, 2 caras, e assim por diante, até 20 caras, pode ser calculado assim:</span>
+<span id="cb19-213"><a href="#cb19-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-216"><a href="#cb19-216" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-217"><a href="#cb19-217" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">dbinom</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">20</span>, <span class="at">size =</span> <span class="dv">50</span>, <span class="at">prob =</span> <span class="fl">0.5</span>))</span>
+<span id="cb19-218"><a href="#cb19-218" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-219"><a href="#cb19-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-222"><a href="#cb19-222" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-223"><a href="#cb19-223" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb19-224"><a href="#cb19-224" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-225"><a href="#cb19-225" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-226"><a href="#cb19-226" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-height: "70%"</span></span>
+<span id="cb19-227"><a href="#cb19-227" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-align: 'center'</span></span>
+<span id="cb19-228"><a href="#cb19-228" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-moeda20</span></span>
+<span id="cb19-229"><a href="#cb19-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Probabilidade acumulada de cair até 20 caras"</span></span>
+<span id="cb19-230"><a href="#cb19-230" aria-hidden="true" tabindex="-1"></a>dist50 <span class="ot">&lt;-</span> <span class="fu">dbinom</span>(<span class="at">x =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">50</span>, <span class="at">size =</span> <span class="dv">50</span>, <span class="at">prob =</span> <span class="fl">0.5</span>)</span>
+<span id="cb19-231"><a href="#cb19-231" aria-hidden="true" tabindex="-1"></a>df50 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">caras =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">50</span>, <span class="at">p =</span> <span class="fu">round</span>(dist50, <span class="dv">3</span>))</span>
+<span id="cb19-232"><a href="#cb19-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-233"><a href="#cb19-233" aria-hidden="true" tabindex="-1"></a>df50 <span class="sc">|&gt;</span> </span>
+<span id="cb19-234"><a href="#cb19-234" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(caras), <span class="at">y =</span> p, <span class="at">fill =</span> caras <span class="sc">&lt;=</span> <span class="dv">20</span>)) <span class="sc">+</span></span>
+<span id="cb19-235"><a href="#cb19-235" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb19-236"><a href="#cb19-236" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"TRUE"</span> <span class="ot">=</span> <span class="st">"red"</span>, <span class="st">"FALSE"</span> <span class="ot">=</span> <span class="st">"steelblue"</span>), <span class="at">guide =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb19-237"><a href="#cb19-237" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">50</span>, <span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb19-238"><a href="#cb19-238" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>))) <span class="sc">+</span></span>
+<span id="cb19-239"><a href="#cb19-239" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb19-240"><a href="#cb19-240" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Número de caras"</span>,</span>
+<span id="cb19-241"><a href="#cb19-241" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Probabilidade"</span></span>
+<span id="cb19-242"><a href="#cb19-242" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-243"><a href="#cb19-243" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb19-244"><a href="#cb19-244" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-245"><a href="#cb19-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-246"><a href="#cb19-246" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb19-247"><a href="#cb19-247" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercício 4</span></span>
+<span id="cb19-248"><a href="#cb19-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-249"><a href="#cb19-249" aria-hidden="true" tabindex="-1"></a>Imagine que, em um determinado jogo, cara é "sucesso" e ganha o jogo quem conseguir, em 50 lançamentos, 20 ou menos caras<span class="ot">[^13-valor_p-3]</span> , ou seja, na @fig-moeda20, o resultado cair na faixa vermelha. Olhando o gráfico, se deduz que banca terá uma chance de 9:1 de sair lucrando! Ou seja, a probabilidade de um jogador ganhar, ao fazer 50 lançamentos de uma moeda, é de aproximadamente 10%.</span>
+<span id="cb19-250"><a href="#cb19-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-251"><a href="#cb19-251" aria-hidden="true" tabindex="-1"></a>Suponha, agora, que neste mesmo jogo, um indivíduo usa a sua moeda na aposta e ganha 3 vezes seguida. O que posso deduzir sobre a honestidade da moeda?</span>
+<span id="cb19-252"><a href="#cb19-252" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-253"><a href="#cb19-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-254"><a href="#cb19-254" aria-hidden="true" tabindex="-1"></a><span class="ot">[^13-valor_p-3]: </span>Consequentemente, $\ge 30$ coroas.</span>
+<span id="cb19-255"><a href="#cb19-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-256"><a href="#cb19-256" aria-hidden="true" tabindex="-1"></a>Para ganhar **três vezes seguidas** (assumindo que as rodadas são independentes), multiplicamos as probabilidades:</span>
+<span id="cb19-257"><a href="#cb19-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-258"><a href="#cb19-258" aria-hidden="true" tabindex="-1"></a>$$P(\text{Ganhar 3 vezes}) = 0,1013 \times 0,1013 \times 0,1013 \approx 0,00104$$</span>
+<span id="cb19-259"><a href="#cb19-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-260"><a href="#cb19-260" aria-hidden="true" tabindex="-1"></a>Ou seja, a probabilidade de isso acontecer puramente por sorte com uma moeda honesta é de apenas 0,1% (cerca de 1 chance em 1.000).</span>
+<span id="cb19-261"><a href="#cb19-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-262"><a href="#cb19-262" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">O que podemos deduzir</span><span class="co">]</span>{.underline}?</span>
+<span id="cb19-263"><a href="#cb19-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-264"><a href="#cb19-264" aria-hidden="true" tabindex="-1"></a>Em estatística, quando um evento com uma probabilidade tão absurdamente baixa acontece, nós começamos a rejeitar a ideia de que foi "apenas sorte".</span>
+<span id="cb19-265"><a href="#cb19-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-266"><a href="#cb19-266" aria-hidden="true" tabindex="-1"></a>Considerando a visão frequentista, em um teste de hipóteses normal, as nossas hipóteses estatísticas seriam:</span>
+<span id="cb19-267"><a href="#cb19-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-268"><a href="#cb19-268" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Hipótese Nula** $H_{0}$: a moeda é honesta\</span></span>
+<span id="cb19-269"><a href="#cb19-269" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Hipóteses Alternativa** $H_{1}$: a moeda não é honesta</span></span>
+<span id="cb19-270"><a href="#cb19-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-271"><a href="#cb19-271" aria-hidden="true" tabindex="-1"></a>Usando uma confiança de 95%, o nível de significância é de $\alpha = 0.05$ <span class="ot">[^13-valor_p-4]</span>. Dessa forma, rejeita-se $H_{0}$ se a probabilidade encontrada for $\le \alpha = 0.05$. A probabilidade de ganhar 3 vezes seguidas é de 0,1% (0,001), muito menor que 0,05 e, assim, podemos rejeitar a hipótese ($H_{0}$) de honestidade da moeda. A moeda provavelmente está alterada para a sair mais coroas (facilitando o resultado de "20 ou menos caras").</span>
+<span id="cb19-272"><a href="#cb19-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-273"><a href="#cb19-273" aria-hidden="true" tabindex="-1"></a><span class="ot">[^13-valor_p-4]: </span>Essa é a tradição arbitrária, usada em estatística. Ou seja, se a probabilidade for igual a 0,049, se rejeita a hipóteses nula $H_{0}$; se for 0,051, ela não é rejeitada. Estranho, né? Mas é assim...</span>
+<span id="cb19-274"><a href="#cb19-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-275"><a href="#cb19-275" aria-hidden="true" tabindex="-1"></a>O dado observado é tão extremo que a explicação de que "a moeda não é honesta" se torna infinitamente mais provável e, se fosse em um cassino, o jogador teria sido convidado a se retirar na terceira rodada!</span>
+<span id="cb19-276"><a href="#cb19-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-277"><a href="#cb19-277" aria-hidden="true" tabindex="-1"></a><span class="fu">### O que é valor de p?</span></span>
+<span id="cb19-278"><a href="#cb19-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-279"><a href="#cb19-279" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb19-280"><a href="#cb19-280" aria-hidden="true" tabindex="-1"></a><span class="fu">## Definição</span></span>
+<span id="cb19-281"><a href="#cb19-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-282"><a href="#cb19-282" aria-hidden="true" tabindex="-1"></a>É a probabilidade de observar dados tão ou mais extremos que os encontrados, **caso a hipótese nula seja verdadeira** <span class="co">[</span><span class="ot">@guyatt1995basic; @menezes2004hipoteses</span><span class="co">]</span>.</span>
+<span id="cb19-283"><a href="#cb19-283" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-284"><a href="#cb19-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-285"><a href="#cb19-285" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Conectando com o exemplo</span></span>
+<span id="cb19-286"><a href="#cb19-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-287"><a href="#cb19-287" aria-hidden="true" tabindex="-1"></a>No exemplo, o valor *p* = 0,001 significa: *"se a moeda fosse honesta (*$H_0$ verdadeira), a probabilidade de um jogador ganhar 3 vezes seguidas seria de apenas 0,1%". Como esse valor é menor que $\alpha = 0{,}05$, rejeita-se $H_0$ e concluí-se que a moeda provavelmente está adulterada.</span>
+<span id="cb19-288"><a href="#cb19-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-289"><a href="#cb19-289" aria-hidden="true" tabindex="-1"></a>A função da estatística termina aqui. A decisão final cabe ao pesquisador: rejeitar ou não $H_0$ deve sempre estar apoiado em uma fundamentação teórica — não apenas no valor *p* isolado.</span>
+<span id="cb19-290"><a href="#cb19-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-291"><a href="#cb19-291" aria-hidden="true" tabindex="-1"></a><span class="fu">#### O que o valor *p* **não** é</span></span>
+<span id="cb19-292"><a href="#cb19-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-293"><a href="#cb19-293" aria-hidden="true" tabindex="-1"></a>As interpretações equivocadas do valor *p* são extremamente comuns [@goodman2008dirty; @wasserstein2016asa]. É tão importante saber o que ele **não** representa quanto a sua definição formal:</span>
+<span id="cb19-294"><a href="#cb19-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-295"><a href="#cb19-295" aria-hidden="true" tabindex="-1"></a>::: callout-warning</span>
+<span id="cb19-296"><a href="#cb19-296" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretações incorretas do valor *p*</span></span>
+<span id="cb19-297"><a href="#cb19-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-298"><a href="#cb19-298" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Não é** a probabilidade de $H_0$ ser verdadeira. Um valor *p* = 0,001 **não** significa que há 99,9% de chance de a moeda estar adulterada — o valor *p* nada diz sobre a probabilidade de uma hipótese ser ou não verdadeira.</span>
+<span id="cb19-299"><a href="#cb19-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-300"><a href="#cb19-300" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Não é** a probabilidade de o resultado ter ocorrido por acaso. É a probabilidade de *resultados tão ou mais extremos* ocorrerem, *supondo* que $H_0$ é verdadeira — uma distinção sutil, mas fundamental.</span>
+<span id="cb19-301"><a href="#cb19-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-302"><a href="#cb19-302" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Não mede** a importância ou o tamanho do efeito. Um valor *p* muito pequeno pode resultar simplesmente de uma amostra grande, mesmo que o efeito prático seja irrelevante. Sempre avalie a magnitude do efeito separadamente.</span>
+<span id="cb19-303"><a href="#cb19-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-304"><a href="#cb19-304" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Não garante** replicação. Um resultado com *p* <span class="sc">\&lt;</span> 0,05 não significa que o mesmo achado se repetirá em um novo estudo.</span>
+<span id="cb19-305"><a href="#cb19-305" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-306"><a href="#cb19-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-307"><a href="#cb19-307" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Resumindo</span></span>
+<span id="cb19-308"><a href="#cb19-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-309"><a href="#cb19-309" aria-hidden="true" tabindex="-1"></a>O valor *p* é uma **ferramenta de decisão**, não uma medida de verdade. Ele informa se os dados observados são compatíveis com a hipótese nula — e, quando não são, ele autoriza a rejeitá-la com um grau de confiança pré-estabelecido. A interpretação final, porém, depende sempre do contexto, da teoria e do julgamento do pesquisador.</span>
+<span id="cb19-310"><a href="#cb19-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-311"><a href="#cb19-311" aria-hidden="true" tabindex="-1"></a><span class="fu">### Erros de Decisão {#sec-erros}</span></span>
+<span id="cb19-312"><a href="#cb19-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-313"><a href="#cb19-313" aria-hidden="true" tabindex="-1"></a>Nessa tomada de decisão, *erros* são cometidos, por exemplo, pode-se rejeitar uma hipótese nula verdadeira. Nesse caso, tem-se um resultado *falso positivo*, conclui-se que existe um efeito quando na verdade ele não existe. Este erro é denominado de **erro tipo I** e a probabilidade de se cometer esse tipo de erro é denominado de $\alpha$.</span>
+<span id="cb19-314"><a href="#cb19-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-315"><a href="#cb19-315" aria-hidden="true" tabindex="-1"></a>$$P(rejeitar \quad H_{0}|H_{0} \quad verdadeira) = \alpha$$</span>
+<span id="cb19-316"><a href="#cb19-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-317"><a href="#cb19-317" aria-hidden="true" tabindex="-1"></a>Outra possibilidade de erro é quando não se rejeita uma hipótese nula falsa. É o erro denominado de erro tipo II. Nesse caso, tem-se um *falso negativo*; não se conseguiu encontrar um efeito que realmente existe. A probabilidade de cometer esse tipo de erro é chamada de $\beta$.</span>
+<span id="cb19-318"><a href="#cb19-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-319"><a href="#cb19-319" aria-hidden="true" tabindex="-1"></a>$$P(não \quad rejeitar \quad H_{0}|H_{0} \quad falsa) = \beta$$</span>
+<span id="cb19-320"><a href="#cb19-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-321"><a href="#cb19-321" aria-hidden="true" tabindex="-1"></a>Na @fig-erros estão resumidas as possíveis consequências na tomada de decisão em um teste de hipótese <span class="co">[</span><span class="ot">@fletcher2014acaso</span><span class="co">]</span>.</span>
+<span id="cb19-322"><a href="#cb19-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-323"><a href="#cb19-323" aria-hidden="true" tabindex="-1"></a><span class="al">![Erros na tomada de decisão](images/erros_decisao.png)</span>{#fig-erros fig-align="center" width="14cm"}</span>
+<span id="cb19-324"><a href="#cb19-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-325"><a href="#cb19-325" aria-hidden="true" tabindex="-1"></a><span class="fu">### Significância estatística versus relevância prática</span></span>
+<span id="cb19-326"><a href="#cb19-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-327"><a href="#cb19-327" aria-hidden="true" tabindex="-1"></a>Rejeitar $H_0$ não significa, necessariamente, que o efeito encontrado seja importante. Essa é uma das armadilhas mais comuns na interpretação de resultados estatísticos.</span>
+<span id="cb19-328"><a href="#cb19-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-329"><a href="#cb19-329" aria-hidden="true" tabindex="-1"></a>O valor *p* depende de **dois fatores**: o tamanho do efeito e o tamanho da amostra. Com amostras muito grandes, até diferenças minúsculas e sem nenhum significado prático produzem valores *p* extremamente pequenos.</span>
+<span id="cb19-330"><a href="#cb19-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-331"><a href="#cb19-331" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Um exemplo com a moeda</span></span>
+<span id="cb19-332"><a href="#cb19-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-333"><a href="#cb19-333" aria-hidden="true" tabindex="-1"></a>Imagine que, ao invés de uma moeda completamente honesta, temos uma moeda com um viés muito sutil: a probabilidade de cara é 0,51 em vez de 0,50 — uma diferença de apenas 1 ponto percentual. Na prática, em qualquer jogo humano, essa diferença seria imperceptível.</span>
+<span id="cb19-334"><a href="#cb19-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-335"><a href="#cb19-335" aria-hidden="true" tabindex="-1"></a>O que acontece ao testar essa moeda com amostras de tamanhos diferentes?</span>
+<span id="cb19-336"><a href="#cb19-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-339"><a href="#cb19-339" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-340"><a href="#cb19-340" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-efeito</span></span>
+<span id="cb19-341"><a href="#cb19-341" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Valor p e tamanho do efeito para diferentes tamanhos de amostra (P(cara) = 0,51)"</span></span>
+<span id="cb19-342"><a href="#cb19-342" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb19-343"><a href="#cb19-343" aria-hidden="true" tabindex="-1"></a>  <span class="at">n         =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">500</span>, <span class="dv">1000</span>, <span class="dv">5000</span>, <span class="dv">10000</span>, <span class="dv">100000</span>),</span>
+<span id="cb19-344"><a href="#cb19-344" aria-hidden="true" tabindex="-1"></a>  <span class="at">caras     =</span> <span class="fu">round</span>(n <span class="sc">*</span> <span class="fl">0.51</span>),</span>
+<span id="cb19-345"><a href="#cb19-345" aria-hidden="true" tabindex="-1"></a>  <span class="at">valor_p   =</span> <span class="fu">map_dbl</span>(n, \(x) <span class="fu">binom.test</span>(<span class="fu">round</span>(x <span class="sc">*</span> <span class="fl">0.51</span>), x, <span class="at">p =</span> <span class="fl">0.5</span>)<span class="sc">$</span>p.value),</span>
+<span id="cb19-346"><a href="#cb19-346" aria-hidden="true" tabindex="-1"></a>  <span class="at">diferenca =</span> <span class="fl">0.51</span> <span class="sc">-</span> <span class="fl">0.50</span></span>
+<span id="cb19-347"><a href="#cb19-347" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb19-348"><a href="#cb19-348" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb19-349"><a href="#cb19-349" aria-hidden="true" tabindex="-1"></a>    <span class="at">n         =</span> <span class="fu">format</span>(n, <span class="at">big.mark =</span> <span class="st">""</span>, <span class="at">scientific =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb19-350"><a href="#cb19-350" aria-hidden="true" tabindex="-1"></a>    <span class="at">caras     =</span> <span class="fu">format</span>(caras, <span class="at">big.mark =</span> <span class="st">""</span>, <span class="at">scientific =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb19-351"><a href="#cb19-351" aria-hidden="true" tabindex="-1"></a>    <span class="at">valor_p   =</span> <span class="fu">format</span>(<span class="fu">round</span>(valor_p, <span class="dv">4</span>), <span class="at">scientific =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb19-352"><a href="#cb19-352" aria-hidden="true" tabindex="-1"></a>    <span class="at">diferenca =</span> scales<span class="sc">::</span><span class="fu">percent</span>(diferenca, <span class="at">accuracy =</span> <span class="fl">0.1</span>)</span>
+<span id="cb19-353"><a href="#cb19-353" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb19-354"><a href="#cb19-354" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb19-355"><a href="#cb19-355" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Lançamentos (n)</span><span class="st">`</span> <span class="ot">=</span> n,</span>
+<span id="cb19-356"><a href="#cb19-356" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Caras observadas</span><span class="st">`</span> <span class="ot">=</span> caras,</span>
+<span id="cb19-357"><a href="#cb19-357" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Valor p</span><span class="st">`</span>          <span class="ot">=</span> valor_p,</span>
+<span id="cb19-358"><a href="#cb19-358" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Diferença real</span><span class="st">`</span>   <span class="ot">=</span> diferenca</span>
+<span id="cb19-359"><a href="#cb19-359" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb19-360"><a href="#cb19-360" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flextable</span>() <span class="sc">|&gt;</span></span>
+<span id="cb19-361"><a href="#cb19-361" aria-hidden="true" tabindex="-1"></a>  <span class="fu">align</span>(<span class="at">align =</span> <span class="st">"center"</span>, <span class="at">part =</span> <span class="st">"all"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-362"><a href="#cb19-362" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autofit</span>()</span>
+<span id="cb19-363"><a href="#cb19-363" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-364"><a href="#cb19-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-365"><a href="#cb19-365" aria-hidden="true" tabindex="-1"></a>Observe que a **diferença real entre a moeda viciada e a honesta é sempre a mesma**: 1 ponto percentual. O que muda é apenas o número de lançamentos. Com 100 lançamentos, o teste não detecta nada. Com 100.000 lançamentos, o *p* é minúsculo — mesmo que a moeda seja praticamente honesta para qualquer fim prático.</span>
+<span id="cb19-366"><a href="#cb19-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-367"><a href="#cb19-367" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Tamanho do efeito</span></span>
+<span id="cb19-368"><a href="#cb19-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-369"><a href="#cb19-369" aria-hidden="true" tabindex="-1"></a>Para complementar o valor *p*, devemos sempre reportar uma medida de **tamanho do efeito** (*effect size*) — uma quantidade que descreve a *magnitude* da diferença, independentemente do tamanho da amostra. Para proporções, as medidas mais comuns são:</span>
+<span id="cb19-370"><a href="#cb19-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-371"><a href="#cb19-371" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Medida <span class="pp">|</span> O que representa <span class="pp">|</span></span>
+<span id="cb19-372"><a href="#cb19-372" aria-hidden="true" tabindex="-1"></a><span class="pp">|----|----|</span></span>
+<span id="cb19-373"><a href="#cb19-373" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Diferença de proporções <span class="pp">|</span> $\hat{p} - p_0$ — a mais intuitiva; no exemplo, vale 0,01 <span class="pp">|</span></span>
+<span id="cb19-374"><a href="#cb19-374" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> *h* de Cohen <span class="pp">|</span> Diferença padronizada entre proporções; $&lt; 0{,}2$ é considerado efeito pequeno <span class="co">[</span><span class="ot">@cohen1992quantitative</span><span class="co">]</span> <span class="pp">|</span></span>
+<span id="cb19-375"><a href="#cb19-375" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Razão de chances (*odds ratio*) <span class="pp">|</span> Quanto maior a chance de um evento em relação ao outro <span class="pp">|</span></span>
+<span id="cb19-376"><a href="#cb19-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-377"><a href="#cb19-377" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb19-378"><a href="#cb19-378" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regra prática</span></span>
+<span id="cb19-379"><a href="#cb19-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-380"><a href="#cb19-380" aria-hidden="true" tabindex="-1"></a>Sempre apresente o valor *p* **junto** com uma medida de tamanho do efeito e os intervalos de confiança. Um resultado pode ser estatisticamente significante e praticamente irrelevante — ou vice-versa.</span>
+<span id="cb19-381"><a href="#cb19-381" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-382"><a href="#cb19-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-383"><a href="#cb19-383" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb19-384"><a href="#cb19-384" aria-hidden="true" tabindex="-1"></a><span class="fu">## O paradoxo inverso: efeito grande, amostra pequena</span></span>
+<span id="cb19-385"><a href="#cb19-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-386"><a href="#cb19-386" aria-hidden="true" tabindex="-1"></a>O problema oposto também existe. Com amostras muito pequenas, um efeito real e expressivo pode não atingir significância estatística — não porque o efeito inexista, mas porque o estudo não tem **poder estatístico** suficiente para detectá-lo.</span>
+<span id="cb19-387"><a href="#cb19-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-388"><a href="#cb19-388" aria-hidden="true" tabindex="-1"></a>Imagine uma moeda com viés intenso: P(cara) = 0,70. Em apenas 10 lançamentos, observamos 7 caras — exatamente o esperado para essa moeda. O teste, porém, não rejeita $H_0$:</span>
+<span id="cb19-389"><a href="#cb19-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-392"><a href="#cb19-392" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-393"><a href="#cb19-393" aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(<span class="dv">7</span>, <span class="dv">10</span>, <span class="at">p =</span> <span class="fl">0.5</span>)<span class="sc">$</span>p.value</span>
+<span id="cb19-394"><a href="#cb19-394" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-395"><a href="#cb19-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-396"><a href="#cb19-396" aria-hidden="true" tabindex="-1"></a>O valor *p* é de aproximadamente 0,34 — muito acima de 0,05. Ainda assim, a moeda tem um viés real de **20 pontos percentuais** em relação a uma moeda honesta. A amostra simplesmente é pequena demais para distinguir esse efeito do acaso.</span>
+<span id="cb19-397"><a href="#cb19-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-398"><a href="#cb19-398" aria-hidden="true" tabindex="-1"></a>Concluir que *"não há efeito"* com base em p \&gt; 0,05 em uma amostra pequena é um erro tão grave quanto ignorar a magnitude do efeito em amostras grandes. **A ausência de significância estatística não é a mesma coisa que ausência de efeito.**</span>
+<span id="cb19-399"><a href="#cb19-399" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-400"><a href="#cb19-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-401"><a href="#cb19-401" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Poder estatístico</span></span>
+<span id="cb19-402"><a href="#cb19-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-403"><a href="#cb19-403" aria-hidden="true" tabindex="-1"></a>O **poder estatístico** de um teste é a probabilidade de rejeitar corretamente $H_0$ quando ela é de fato falsa — ou seja, a capacidade do estudo de detectar um efeito real quando ele existe:</span>
+<span id="cb19-404"><a href="#cb19-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-405"><a href="#cb19-405" aria-hidden="true" tabindex="-1"></a>$$\text{Poder} = 1 - \beta$$</span>
+<span id="cb19-406"><a href="#cb19-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-407"><a href="#cb19-407" aria-hidden="true" tabindex="-1"></a>onde $\beta$ é a probabilidade de **erro do tipo II**: não rejeitar $H_0$ quando ela deveria ser rejeitada (\@fig-power).</span>
+<span id="cb19-408"><a href="#cb19-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-409"><a href="#cb19-409" aria-hidden="true" tabindex="-1"></a>Por convenção, busca-se um poder mínimo de 80% no planejamento de estudos <span class="co">[</span><span class="ot">@cohen1988power</span><span class="co">]</span>.</span>
+<span id="cb19-410"><a href="#cb19-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-411"><a href="#cb19-411" aria-hidden="true" tabindex="-1"></a>No exemplo da moeda viciada (P(cara) = 0,70, $n$ = 10), o poder pode ser calculado com o pacote <span class="in">`pwr`</span> <span class="co">[</span><span class="ot">@champely2020pwr</span><span class="co">][^13-valor_p-5]</span>:</span>
+<span id="cb19-412"><a href="#cb19-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-413"><a href="#cb19-413" aria-hidden="true" tabindex="-1"></a><span class="ot">[^13-valor_p-5]: </span>A função <span class="in">`pwr.p.test()`</span> é usada para testes de **uma proporção** (como o teste da moeda). Quando o objetivo é comparar **duas proporções independentes** — por exemplo, a taxa de sucesso de dois tratamentos —, a função equivalente é <span class="in">`pwr.2p.test()`</span>, com a mesma estrutura de argumentos.</span>
+<span id="cb19-414"><a href="#cb19-414" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-417"><a href="#cb19-417" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-418"><a href="#cb19-418" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pwr)</span>
+<span id="cb19-419"><a href="#cb19-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-420"><a href="#cb19-420" aria-hidden="true" tabindex="-1"></a><span class="fu">pwr.p.test</span>(</span>
+<span id="cb19-421"><a href="#cb19-421" aria-hidden="true" tabindex="-1"></a>  <span class="at">h         =</span> <span class="fu">ES.h</span>(<span class="at">p1 =</span> <span class="fl">0.70</span>, <span class="at">p2 =</span> <span class="fl">0.50</span>),  <span class="co"># h de Cohen para proporções</span></span>
+<span id="cb19-422"><a href="#cb19-422" aria-hidden="true" tabindex="-1"></a>  <span class="at">n         =</span> <span class="dv">10</span>,</span>
+<span id="cb19-423"><a href="#cb19-423" aria-hidden="true" tabindex="-1"></a>  <span class="at">sig.level =</span> <span class="fl">0.05</span></span>
+<span id="cb19-424"><a href="#cb19-424" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-425"><a href="#cb19-425" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-426"><a href="#cb19-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-427"><a href="#cb19-427" aria-hidden="true" tabindex="-1"></a>Com apenas 10 lançamentos, o poder é de **\~26%**: em cerca de 3 a cada 4 experimentos, o teste falharia em detectar a moeda viciada, mesmo com um viés de 20 pontos percentuais.</span>
+<span id="cb19-428"><a href="#cb19-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-429"><a href="#cb19-429" aria-hidden="true" tabindex="-1"></a>Para descobrir quantos lançamentos seriam necessários para atingir 80% de poder, deixamos <span class="in">`n`</span> em aberto e fornecemos o poder desejado:</span>
+<span id="cb19-430"><a href="#cb19-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-433"><a href="#cb19-433" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-434"><a href="#cb19-434" aria-hidden="true" tabindex="-1"></a><span class="fu">pwr.p.test</span>(</span>
+<span id="cb19-435"><a href="#cb19-435" aria-hidden="true" tabindex="-1"></a>  <span class="at">h         =</span> <span class="fu">ES.h</span>(<span class="at">p1 =</span> <span class="fl">0.70</span>, <span class="at">p2 =</span> <span class="fl">0.50</span>),</span>
+<span id="cb19-436"><a href="#cb19-436" aria-hidden="true" tabindex="-1"></a>  <span class="at">sig.level =</span> <span class="fl">0.05</span>,</span>
+<span id="cb19-437"><a href="#cb19-437" aria-hidden="true" tabindex="-1"></a>  <span class="at">power     =</span> <span class="fl">0.80</span></span>
+<span id="cb19-438"><a href="#cb19-438" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-439"><a href="#cb19-439" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-440"><a href="#cb19-440" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-441"><a href="#cb19-441" aria-hidden="true" tabindex="-1"></a>Seriam necessários **47 lançamentos** para ter 80% de chance de detectar o viés. Com apenas 10, o estudo estava seriamente subdimensionado.</span>
+<span id="cb19-442"><a href="#cb19-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-443"><a href="#cb19-443" aria-hidden="true" tabindex="-1"></a>No exemplo da moeda, um pesquisador responsável diria: *"O teste foi significante (p \&lt; 0,05), mas a diferença estimada é de apenas 1 ponto percentual, sem relevância prática para o contexto estudado."* Já em um estudo com amostra pequena, o correto seria: *"O teste não atingiu significância (p = 0,34), mas o efeito estimado é de 20 pontos percentuais — uma amostra maior seria necessária para confirmar ou descartar esse achado."*</span>
+<span id="cb19-444"><a href="#cb19-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-445"><a href="#cb19-445" aria-hidden="true" tabindex="-1"></a><span class="al">![Poder Estatístico](images/poder.png)</span>{#fig-power width="15cm"}</span>
+</code><button title="Copiar para a área de transferência" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

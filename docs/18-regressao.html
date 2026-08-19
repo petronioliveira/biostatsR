@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>18&nbsp; Regressão Linear Simples – Bioestatística Usando o R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./19-dadoscategoricos.html" rel="next">
+<link href="./17-correlacao.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Nenhum resultado",
+    "search-matching-documents-text": "documentos correspondentes",
+    "search-copy-link-title": "Copiar link para a busca",
+    "search-hide-matches-text": "Esconder correspondências adicionais",
+    "search-more-match-text": "mais correspondência neste documento",
+    "search-more-matches-text": "mais correspondências neste documento",
+    "search-clear-button-title": "Limpar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Procurar"
+  }
+}</script>
+<link href="site_libs/tabwid-1.1.3/tabwid.css" rel="stylesheet">
+
+<script src="site_libs/tabwid-1.1.3/tabwid.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-sidebar floating slimcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./17-correlacao.html">Parte VII - Relações entre Variáveis</a></li><li class="breadcrumb-item"><a href="./18-regressao.html"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Regressão Linear Simples</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Procurar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Bioestatística Usando o R</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Procurar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefácio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte I: Fundamentos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introdução</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-dados.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Natureza dos Dados</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-producaoDados.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Produção dos Dados</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte II - Ambiente Computacional com R</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-introducaoR.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Introdução ao uso do R</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-manipulacao_dados.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Manipulação dos dados no R</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte III - Estatística Descritiva</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-medidasResumidoras.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Medidas Resumidoras</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-tabelas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Tabelas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-graficos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Gráficos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Módulo IV: Probabilidades e Distribuições</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-probabilidades.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Introdução à Teoria das Probabilidades</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-assimetria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Assimetria e Curtose</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-distAmostrais.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Distribuições Amostrais</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Módulo V: Inferência Estatística</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-estimacao.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Estimação</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-valor_p.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Valor <em>p</em></span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte VI - Testes Paramétricos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-teste-t.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Comparação entre duas médias</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-anova.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Análise de Variância</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-anovaRep.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Anova de Medidas Repetidas</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte VII - Relações entre Variáveis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./17-correlacao.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Correlação</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./18-regressao.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Regressão Linear Simples</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte VIII - Métodos Não Paramétricos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./19-dadoscategoricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Análise de Dados Categóricos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-testes-naoParametricos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Métodos não paramétricos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parte IX - Bioestatística Aplicada à Epidemiologia</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./21-testesDiag.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Avaliação de testes diagnósticos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./22-medidasOcorrencia.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Medidas de ocorrência de doença</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./23-sobrevida.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Análise de Sobrevida</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Índice</h2>
+   
+  <ul>
+  <li><a href="#pacotes-usados-neste-capítulo" id="toc-pacotes-usados-neste-capítulo" class="nav-link active" data-scroll-target="#pacotes-usados-neste-capítulo"><span class="header-section-number">18.1</span> Pacotes usados neste capítulo</a></li>
+  <li><a href="#introdução" id="toc-introdução" class="nav-link" data-scroll-target="#introdução"><span class="header-section-number">18.2</span> Introdução</a></li>
+  <li><a href="#dados-usados-no-exemplo" id="toc-dados-usados-no-exemplo" class="nav-link" data-scroll-target="#dados-usados-no-exemplo"><span class="header-section-number">18.3</span> Dados usados no exemplo</a></li>
+  <li><a href="#sec-residuos" id="toc-sec-residuos" class="nav-link" data-scroll-target="#sec-residuos"><span class="header-section-number">18.4</span> Resíduos</a></li>
+  <li><a href="#análise-dos-pressupostos-do-modelo-de-regressão" id="toc-análise-dos-pressupostos-do-modelo-de-regressão" class="nav-link" data-scroll-target="#análise-dos-pressupostos-do-modelo-de-regressão"><span class="header-section-number">18.5</span> Análise dos pressupostos do modelo de regressão</a>
+  <ul class="collapse">
+  <li><a href="#avaliação-da-normalidade-dos-resíduos" id="toc-avaliação-da-normalidade-dos-resíduos" class="nav-link" data-scroll-target="#avaliação-da-normalidade-dos-resíduos"><span class="header-section-number">18.5.1</span> Avaliação da normalidade dos resíduos</a></li>
+  <li><a href="#pesquisa-de-valores-atípicos-nos-resíduos" id="toc-pesquisa-de-valores-atípicos-nos-resíduos" class="nav-link" data-scroll-target="#pesquisa-de-valores-atípicos-nos-resíduos"><span class="header-section-number">18.5.2</span> Pesquisa de valores atípicos nos resíduos</a></li>
+  <li><a href="#sec-BP" id="toc-sec-BP" class="nav-link" data-scroll-target="#sec-BP"><span class="header-section-number">18.5.3</span> Homocedasticidade dos resíduos</a></li>
+  <li><a href="#sec-dw" id="toc-sec-dw" class="nav-link" data-scroll-target="#sec-dw"><span class="header-section-number">18.5.4</span> Independência dos resíduos</a></li>
+  </ul></li>
+  <li><a href="#tamanho-amostral-na-regressão" id="toc-tamanho-amostral-na-regressão" class="nav-link" data-scroll-target="#tamanho-amostral-na-regressão"><span class="header-section-number">18.6</span> Tamanho amostral na regressão</a></li>
+  <li><a href="#interpretação-do-modelo-de-regressão-linear-simples" id="toc-interpretação-do-modelo-de-regressão-linear-simples" class="nav-link" data-scroll-target="#interpretação-do-modelo-de-regressão-linear-simples"><span class="header-section-number">18.7</span> Interpretação do modelo de regressão linear simples</a></li>
+  <li><a href="#visualização-dos-resultados" id="toc-visualização-dos-resultados" class="nav-link" data-scroll-target="#visualização-dos-resultados"><span class="header-section-number">18.8</span> Visualização dos resultados</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Referências</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./17-correlacao.html">Parte VII - Relações entre Variáveis</a></li><li class="breadcrumb-item"><a href="./18-regressao.html"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Regressão Linear Simples</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-rls" class="quarto-section-identifier"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Regressão Linear Simples</span></span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="pacotes-usados-neste-capítulo" class="level2" data-number="18.1">
+<h2 data-number="18.1" class="anchored" data-anchor-id="pacotes-usados-neste-capítulo"><span class="header-section-number">18.1</span> Pacotes usados neste capítulo</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(car,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               flextable,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               ggpubr,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>               knitr,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>               lmtest,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>               readxl,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>               rstatix,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>               tidyverse)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="introdução" class="level2" data-number="18.2">
+<h2 data-number="18.2" class="anchored" data-anchor-id="introdução"><span class="header-section-number">18.2</span> Introdução</h2>
+<p>A <em>regressão linear simples</em>, assim como a correlação, é uma técnica usada para explorar a natureza da relação entre duas variáveis aleatórias contínuas. A principal diferença entre esses dois métodos analíticos é que a regressão permite investigar a alteração em uma variável, chamada <em>resposta</em>, correspondente a uma determinada alteração em outra, conhecida como variável <em>explicativa</em>. A regressão é um modelo matemático que permite a <em>predição</em> de uma variável resposta a partir de uma outra variável explicativa. A análise de correlação quantifica a força da relação entre as variáveis, tratando-as simetricamente <span class="citation" data-cites="sedgwick2013correlation">(<a href="#ref-sedgwick2013correlation" role="doc-biblioref">1</a>)</span>.</p>
+<p>A <em>regressão linear simples</em> é chamada assim, porque existe apenas uma variável independente. Se houver mais de uma variável independente, é chamada de <em>regressão múltipla</em>.</p>
+<p>A representação matemática do modelo de regressão linear populacional é descrita pela equação da reta de melhor ajuste em um conjunto de pares de dados (x, y) em um gráfico de dispersão de pontos.</p>
+<p><span class="math display">\[y = \beta_{0} + \beta_{1}x\]</span></p>
+<div id="fig-retareg" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-retareg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/reg_linear.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:14cm">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-retareg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;18.1: Reta de regressão, coeficiente angular e coeficiente linear
+</figcaption>
+</figure>
+</div>
+<p>A inclinação da reta de regressão (<span class="math inline">\(\beta_{1}\)</span>) determina a variação de <em>y</em> para cada unidade de variação de <em>x</em> e recebe o nome de <em>coeficiente angular</em> ou <em>de regressão</em>. O ponto de interceptação da reta com <em>y</em> quando <em>x</em> é igual a zero é <span class="math inline">\(\beta_{0}\)</span> e é denominado de <em>coeficiente linear</em> (<a href="#fig-retareg" class="quarto-xref">Figura&nbsp;<span>18.1</span></a>). A equação da reta de regressão amostral que estima a reta de regressão populacional é igual a:</p>
+<p><span class="math display">\[\hat {y} = b_{0} + b_{1}x\]</span></p>
+<p>A reta do diagrama de dispersão da <a href="#fig-retareg" class="quarto-xref">Figura&nbsp;<span>18.1</span></a> é a melhor reta de ajuste aos dados.</p>
+</section>
+<section id="dados-usados-no-exemplo" class="level2" data-number="18.3">
+<h2 data-number="18.3" class="anchored" data-anchor-id="dados-usados-no-exemplo"><span class="header-section-number">18.3</span> Dados usados no exemplo</h2>
+<p>Serão usados os mesmos dados do exemplo da Correlação (<a href="17-correlacao.html#sec-execor" class="quarto-xref"><span>Seção 17.4</span></a>). A função <code>read_excel</code> do pacote <code>readxl</code> carregará o arquivo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dados <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"dados/dadosReg.xlsx"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(idade, comp)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dados)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [40 × 2] (S3: tbl_df/tbl/data.frame)
+ $ idade: num [1:40] 18 18 19 19 20 20 21 21 22 22 ...
+ $ comp : num [1:40] 80 80 83 82 84 81 84.5 84 85 82.5 ...</code></pre>
+</div>
+</div>
+<p>Para revisar as estatísticas descritivas do conjunto de dados, será executado o seguinte código:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dados <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  rstatix<span class="sc">::</span><span class="fu">get_summary_stats</span>(idade,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                             comp,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">type =</span> <span class="st">"mean_sd"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  variable     n  mean    sd
+  &lt;fct&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 idade       40  27.0  5.41
+2 comp        40  90.2  6.00</code></pre>
+</div>
+</div>
+</section>
+<section id="sec-residuos" class="level2 page-columns page-full" data-number="18.4">
+<h2 data-number="18.4" class="anchored" data-anchor-id="sec-residuos"><span class="header-section-number">18.4</span> Resíduos</h2>
+<p>No exemplo usado na correlação (<a href="17-correlacao.html#sec-execor" class="quarto-xref"><span>Seção 17.4</span></a>), verificou-se que existe uma correlação linear entre a idade e o comprimento de crianças, usando uma amostra de 40 crianças entre 18 e 36 meses. A correlação de Pearson foi muito forte (<em>r</em> = 0,96, <em>p</em> &lt; 0,00001). Esta relação linear pode ser descrita pela reta, mostrada na <a href="#fig-retareg1" class="quarto-xref">Figura&nbsp;<span>18.2</span></a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(dados, </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                <span class="fu">aes</span>(<span class="at">x =</span> idade, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> comp,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">color =</span> <span class="st">"tomato"</span>)) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">se =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">color =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Idade (meses)"</span>) <span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Comprimento (cm)"</span>) <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>)) <span class="sc">+</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-retareg1" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-retareg1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="18-regressao_files/figure-html/fig-retareg1-1.png" class="quarto-figure quarto-figure-center figure-img" style="width:70.0%;height:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-retareg1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;18.2: Reta de regressão
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Não é possível traçar uma reta que passe por todos os pontos. Esta reta ideal descreveria uma correlação perfeita, que não é o caso. Pode haver várias retas, a reta calculada pela regressão linear é aquela que promove o melhor ajuste, ou seja, é aquela cuja distância dos pontos até a reta é a menor possível.</p>
+<p>Os resíduos são a diferença entre o valor observado e o valor previsto pelo modelo de regressão linear, construído anteriormente (<code>mod_reg</code>). A técnica estatística para achar a melhor reta que ajusta um conjunto de dados é denominada de <strong>método dos mínimos quadrados</strong> (<em>Ordinary Least Square</em>). A melhor reta ajustada é aquela em que a soma dos quadrados da distância de cada ponto (<strong>soma dos quadrados residual</strong>) em relação à reta é minimizada.</p>
+<p>Para se obter os resíduos, ajusta-se um modelo de regressão, usando a função <code>lm()</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, nativa do R:</p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;lm = linear model</p></div></div><div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mod_reg <span class="ot">&lt;-</span> <span class="fu">lm</span>(comp <span class="sc">~</span> idade, <span class="at">data =</span> dados)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>O modelo fornece uma série de variáveis que podem ser visualizadas com:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>(mod_reg)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "assign"        "call"          "coefficients"  "df.residual"  
+ [5] "effects"       "fitted.values" "model"         "qr"           
+ [9] "rank"          "residuals"     "terms"         "xlevels"      </code></pre>
+</div>
+</div>
+<p>Assim, as variáveis <code>residuos</code> e <code>preditos</code> podem ser criadas no dataframe <code>dados</code> da seguinte maneira:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dados<span class="sc">$</span>residuos <span class="ot">&lt;-</span> <span class="fu">residuals</span>(mod_reg)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>dados<span class="sc">$</span>preditos <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod_reg) </span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Usando essas variáveis, pode-se criar o gráfico da <a href="#fig-residuos" class="quarto-xref">Figura&nbsp;<span>18.3</span></a> que mostra os resíduos do modelo:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(dados, </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                <span class="fu">aes</span>(<span class="at">x =</span> idade, </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> comp,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">color =</span> <span class="st">"tomato"</span>)) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">se =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">color =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> idade, </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">yend =</span> preditos), </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">linewidth =</span> <span class="fl">0.8</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>               <span class="at">linetype =</span> <span class="st">"dotted"</span>) <span class="sc">+</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> preditos), </span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">shape =</span> <span class="dv">19</span>,</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">3</span>,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Idade (meses)"</span>) <span class="sc">+</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Comprimento (cm)"</span>) <span class="sc">+</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>)) <span class="sc">+</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-residuos" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-residuos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="18-regressao_files/figure-html/fig-residuos-1.png" class="quarto-figure quarto-figure-center figure-img" style="width:70.0%;height:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-residuos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;18.3: Resíduos do Modelo de Regressão Linear
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Uma boa maneira de testar a qualidade do ajuste do modelo é observar os resíduos <span class="citation" data-cites="kim2019statistical">(<a href="#ref-kim2019statistical" role="doc-biblioref">2</a>)</span> ou as diferenças entre os valores reais (pontos vermelhos) e os valores previstos (pontos azuis). A reta de regressão, em azul no gráfico, representa os valores previstos. A linha vertical pontilhada da linha reta até o valor dos dados observados é o <strong>resíduo</strong>.</p>
+<p>A ideia aqui é que a soma dos resíduos seja aproximadamente zero ou o mais baixo possível. Na vida real, a maioria dos casos não seguirá uma linha perfeitamente reta, portanto, resíduos são esperados. Na saída do resumo da função <code>lm()</code> em (<code>mod_reg$residuals</code>) aparecem estatísticas descritivas sobre os resíduos do modelo (<em>residuals</em>), elas mostram como os resíduos são aproximadamente zero. Pode-se observar isso, usando a função <code>summary ()</code> e <code>sum()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_reg<span class="sc">$</span>residuals)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+-3.20326 -1.20326  0.08994  0.00000  1.25849  3.49221 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(mod_reg<span class="sc">$</span>residuals)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -3.538836e-15</code></pre>
+</div>
+</div>
+<p>Como se observa, a soma dos resíduos é praticamente igual a zero (<span class="math inline">\(-3{,}54 \times 10^{-15}\)</span>).</p>
+</section>
+<section id="análise-dos-pressupostos-do-modelo-de-regressão" class="level2 page-columns page-full" data-number="18.5">
+<h2 data-number="18.5" class="anchored" data-anchor-id="análise-dos-pressupostos-do-modelo-de-regressão"><span class="header-section-number">18.5</span> Análise dos pressupostos do modelo de regressão</h2>
+<section id="avaliação-da-normalidade-dos-resíduos" class="level3" data-number="18.5.1">
+<h3 data-number="18.5.1" class="anchored" data-anchor-id="avaliação-da-normalidade-dos-resíduos"><span class="header-section-number">18.5.1</span> Avaliação da normalidade dos resíduos</h3>
+<p>Ao analisar os pressupostos da correlação, foi realizada a avaliação da normalidade nos dados brutos. Na regressão, o foco muda quase que totalmente para os <strong>resíduos</strong> (os erros do modelo: <span class="math inline">\(y - \hat{y}\)</span>), porque o objetivo é prever <em>y</em> a partir de <em>x</em> .</p>
+<p>O correto é avaliar os pressupostos sobre os resíduos do modelo como um todo. Estes resíduos encontram-se, como visto, na variável <code>resíduos</code> extraída do modelo de regressão (<code>mod_reg</code>).</p>
+<p>Dessa forma, a função <code>shapiro_test()</code> do pacote <code>rstatix</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dados <span class="sc">|&gt;</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  rstatix<span class="sc">::</span><span class="fu">shapiro_test</span>(residuos)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  variable statistic     p
+  &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt;
+1 residuos     0.979 0.655</code></pre>
+</div>
+</div>
+<p>Pode-se observar isso, gerando o QQ plot dos resíduos com <code>ggpubr::ggqqplot()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ggpubr<span class="sc">::</span><span class="fu">ggqqplot</span>(<span class="at">data =</span> dados,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">x =</span> <span class="st">"residuos"</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"steelblue4"</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">"Quantis normais"</span>, </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ylab =</span> <span class="st">"Residuos"</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ggtheme =</span> <span class="fu">theme_bw</span>())</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-rlnorm" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rlnorm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="18-regressao_files/figure-html/fig-rlnorm-1.png" class="quarto-figure quarto-figure-center figure-img" style="width:70.0%;height:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rlnorm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;18.4: Gráfico QQ para verificar a normalidade dos resíduos na RL
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>A saída do teste de Shapiro-Wilk mostra um valor <em>p</em> &gt; 0,05 e pode-se decidir que não há evidência de violação da normalidade. Fato reforçado pela <a href="#fig-rlnorm" class="quarto-xref">Figura&nbsp;<span>18.4</span></a> que mostra que os pontos acompanham a reta de referência.</p>
+</section>
+<section id="pesquisa-de-valores-atípicos-nos-resíduos" class="level3 page-columns page-full" data-number="18.5.2">
+<h3 data-number="18.5.2" class="anchored" data-anchor-id="pesquisa-de-valores-atípicos-nos-resíduos"><span class="header-section-number">18.5.2</span> Pesquisa de valores atípicos nos resíduos</h3>
+<p>Uma maneira de avaliar os valores atípicos, é transformar os resíduos em resíduos padronizados e verificar a distribuição desses, sabendo que em uma amostra normalmente distribuída, ao redor de 95% dos valores estão entre –1,96 e +1,96 desvios padrão; 99% deve estar entre –2,58 e +2,58 e quase todos (99,9%) devem se situar entre –3,09 e +3,09 desvios padrão <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</p>
+<div class="no-row-height column-margin column-container"><div id="fn2"><p><sup>2</sup>&nbsp;<strong>Regra prática:</strong> Resíduos além de <span class="math inline">\(\pm 2\)</span> acendem um sinal amarelo (merecem atenção) e resíduos além de <span class="math inline">\(\pm 3\)</span> são formalmente classificados como <strong><em>outliers</em></strong>estatísticos (sinal vermelho).</p></div></div><p>Existe uma função denominada <code>rstandard()</code>, também nativa do R, que padroniza os resíduos do <code>mod_reg</code>. Assim, pode-se criar uma variável no conjunto <code>dados</code> com esses resíduos padronizados e fazer um sumário, usando a função <code>summary()</code>. Esta função exibirá a estatística dos 5 números mais a média para os resíduos padronizados:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>dados<span class="sc">$</span>residuos_p <span class="ot">&lt;-</span> <span class="fu">rstandard</span>(mod_reg)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dados<span class="sc">$</span>residuos_p)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
+-1.9327846 -0.7271178  0.0548028  0.0006059  0.7779208  2.1154118 </code></pre>
+</div>
+</div>
+<p>A saída mostra que não há resíduos padronizados com um valor absoluto maior que 3. Acima deste valor existe motivo de preocupação porque em uma amostra média é improvável que aconteça um valor tão alto por acaso <span class="citation" data-cites="field2012regression">(<a href="#ref-field2012regression" role="doc-biblioref">3</a>)</span>.</p>
+<section id="distância-de-cook" class="level4" data-number="18.5.2.1">
+<h4 data-number="18.5.2.1" class="anchored" data-anchor-id="distância-de-cook"><span class="header-section-number">18.5.2.1</span> Distância de Cook</h4>
+<p>Olhar apenas para o resíduo padronizado mede o quão distante o ponto está da reta na vertical (<em>y</em>). Mas na regressão linear, um <em>outlier</em> perigoso é aquele que tem o poder de <strong>distorcer a reta</strong>. Por isso, é interessante avaliar métricas complementares como a <strong>distância de Cook</strong>. Ela avalia o quanto a sua reta de regressão mudaria se aquele ponto específico fosse deletado.<br>
+Pontos com Distância de Cook maiores que 1 (ou maiores que <span class="math inline">\(4/n\)</span>, onde <span class="math inline">\(n\)</span> é o tamanho da amostra) são considerados pontos de alta influência. Mesmo que o resíduo padronizado não seja gigante, se ele altera a reta, ele é um <code>outlier</code> problemático.</p>
+<p>A distância de Cook pode ser obtida pela função <code>cooks.distance()</code> com o modelo de regressão:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>dados<span class="sc">$</span>d_cook <span class="ot">&lt;-</span> <span class="fu">cooks.distance</span>(mod_reg)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dados<span class="sc">$</span>d_cook)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+2.443e-05 1.511e-03 1.158e-02 1.992e-02 3.846e-02 7.545e-02 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="fu">nrow</span>(dados)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>limite <span class="ot">&lt;-</span> <span class="dv">4</span><span class="sc">/</span>n</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>limite</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1</code></pre>
+</div>
+</div>
+<p>A saída do sumário mostra que não existem valores de distância de Cook superiores ao limite definido. Isso pode ser observado na <a href="#fig-cook" class="quarto-xref">Figura&nbsp;<span>18.5</span></a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>dados<span class="sc">$</span>alavancagem <span class="ot">&lt;-</span> <span class="fu">hatvalues</span>(mod_reg)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Número de parâmetros(intercepto + inclinação)</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="co"># Número de parâmetros </span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Criar a função matemática correta baseada no limite dos dados</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>cook_limite <span class="ot">&lt;-</span> <span class="cf">function</span>(leverage, cook_d, <span class="at">k_param =</span> k) {</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Adiciona um tratamento para evitar divisão por zero</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ifelse</span>(leverage <span class="sc">&lt;=</span> <span class="dv">0</span>, <span class="cn">NA</span>, <span class="fu">sqrt</span>((cook_d <span class="sc">*</span> k_param <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> leverage)) <span class="sc">/</span> leverage))</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Gerar o grid focando na escala real da sua alavancagem (de 0 a 0.10)</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>grid_cook <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">alavancagem =</span> <span class="fu">seq</span>(<span class="fl">0.001</span>, <span class="fu">max</span>(dados<span class="sc">$</span>alavancagem) <span class="sc">*</span> <span class="fl">1.1</span>, <span class="at">length.out =</span> <span class="dv">200</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">cook_05_pos =</span> <span class="fu">cook_limite</span>(alavancagem, <span class="fl">0.5</span>),</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">cook_05_neg =</span> <span class="sc">-</span><span class="fu">cook_limite</span>(alavancagem, <span class="fl">0.5</span>)</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Montar o gráfico definitivo</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>dados <span class="sc">|&gt;</span>  </span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> alavancagem, <span class="at">y =</span> residuos_p)) <span class="sc">+</span> </span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Linhas da Distância de Cook</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> grid_cook, <span class="fu">aes</span>(<span class="at">y =</span> cook_05_pos), <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> grid_cook, <span class="fu">aes</span>(<span class="at">y =</span> cook_05_neg), <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Texto indicador ajustado para os dados</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, </span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>           <span class="at">x =</span> <span class="fu">max</span>(dados<span class="sc">$</span>alavancagem), </span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> <span class="fu">cook_limite</span>(<span class="fu">max</span>(dados<span class="sc">$</span>alavancagem), <span class="fl">0.5</span>) <span class="sc">+</span> <span class="fl">0.4</span>, <span class="co"># Linha + uma folguinha para cima</span></span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"Cook's d = 0.5"</span>, </span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"red"</span>, </span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>           <span class="at">size =</span> <span class="dv">3</span>, </span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>           <span class="at">hjust =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Dados e a curva loess</span></span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">'dashed'</span>, <span class="at">col =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Zoom sem quebrar o cálculo das linhas</span></span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>)) <span class="sc">+</span> </span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Ajuste fino das quebras do eixo Y para melhor a estética visual</span></span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="at">by =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"alavancagem"</span>, <span class="at">y =</span> <span class="st">"residuos_p"</span>) <span class="sc">+</span></span>
+<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-cook" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cook-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="18-regressao_files/figure-html/fig-cook-1.png" class="quarto-figure quarto-figure-center figure-img" style="width:70.0%;height:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cook-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;18.5: Gráfico Diagnóstico: Resíduos padronizados vs.&nbsp;Alavancagem
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Resumindo:</p>
+<ul>
+<li><p>Ausência de pontos influentes: A linha vermelha de Cook está lá no topo, isolada, e nenhum ponto sequer ameaça chegar perto dela.</p></li>
+<li><p>Linearidade bem resolvida: A linha azul na <a href="#fig-cook" class="quarto-xref">Figura&nbsp;<span>18.5</span></a> oscila muito timidamente bem próxima da linha vermelha tracejada do zero, mostrando que não há desvios sistemáticos.</p></li>
+<li><p>Boa distribuição: A grande massa de dados tem resíduos padronizados confortavelmente situados entre -2 e 2.</p></li>
+</ul>
+</section>
+</section>
+<section id="sec-BP" class="level3" data-number="18.5.3">
+<h3 data-number="18.5.3" class="anchored" data-anchor-id="sec-BP"><span class="header-section-number">18.5.3</span> Homocedasticidade dos resíduos</h3>
+<p>Na regressão linear simples, a análise da homocedasticidade significa verificar se a variabilidade dos resíduos (erros) permanece constante ao longo de todos os valores previstos pelo modelo. Em termos simples: o modelo não pode ser mais preciso em uma idade e essencialmente um palpite em outra.</p>
+<p>Para fazer essa análise de forma robusta na prática, você deve combinar a análise visual (a mais importante e recomendada) com um teste estatístico formal.</p>
+<p>A melhor forma de diagnosticar a homocedasticidade é gerando os gráficos baseados nos resíduos do modelo. Plotar os <strong>Resíduos Padronizados</strong> versus <strong>Valores Ajustados</strong> (Fitted Values), variável <code>preditos</code> no conjunto <code>dados</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>dados <span class="sc">|&gt;</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> preditos, <span class="at">y =</span> residuos_p)) <span class="sc">+</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Valores Preditos (Comprimento Estimado)"</span>, </span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Resíduos Padronizados"</span>) <span class="sc">+</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-homo" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-homo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="18-regressao_files/figure-html/fig-homo-1.png" class="quarto-figure quarto-figure-center figure-img" style="width:70.0%;height:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-homo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;18.6: Gráfico Diagnóstico: Resíduos padronizados vs.&nbsp;Valores Ajustados
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Como interpretar o gráfico?</p>
+<ul>
+<li><p><u>Cenário Ideal (Homocedasticidade)</u>: Os pontos pretos devem estar espalhados de forma aleatória e uniforme acima e abaixo da linha horizontal vermelha (<a href="#fig-homo" class="quarto-xref">Figura&nbsp;<span>18.6</span></a>), formando uma “banda” ou “retângulo” de largura constante. A linha azul deve ficar o mais reta e horizontal possível perto do zero (<a href="#fig-homo" class="quarto-xref">Figura&nbsp;<span>18.6</span></a>).</p></li>
+<li><p><u>Problema (Heterocedasticidade)</u>: Se a dispersão dos pontos começar bem estreita de um lado e abrir como um funil, cone ou megafone à medida que os valores preditos aumentam, a homocedasticidade foi violada.</p></li>
+</ul>
+<p>Concluindo a avaliação visual:</p>
+<ul>
+<li><p><u>Dispersão em Banda Uniforme</u>: A “nuvem” de pontos pretos está distribuída de forma homogênea e retangular ao longo de todo o eixo <em>x</em> (desde os valores estimados de 80 cm até 100 cm). Não há nenhuma evidência daquele formato clássico de “funil”, “megafone” ou “cone” que denunciaria a heterocedasticidade.</p></li>
+<li><p><u>Amplitude Constante</u>: A variabilidade vertical dos pontos (no eixo <em>y</em>) se mantém quase idêntica do início ao fim do gráfico, flutuando estavelmente dentro do intervalo seguro de <span class="math inline">\(-2\)</span> a <span class="math inline">\(+2\)</span> desvios-padrão.</p></li>
+<li><p><u>Linha de Tendência Estável</u>: A linha azul oscila de forma muito sutil e comportada em torno da linha tracejada vermelha do zero. Essa leve oscilação é perfeitamente normal e esperada devido à flutuação de pequenas amostras, não indicando nenhum desvio sistemático de variância ou falta de linearidade.</p></li>
+</ul>
+<p>Completando a avaliação visual, o teste estatístico mais amplamente utilizado para regressão linear é o <strong>Teste de Breusch-Pagan</strong>. Esse teste não é nativo do R, mas está presente no pacote <code>lmtest</code> <span class="citation" data-cites="hothorn2015lmtest">(<a href="#ref-hothorn2015lmtest" role="doc-biblioref">4</a>)</span>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">bptest</span>(mod_reg)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    studentized Breusch-Pagan test
+
+data:  mod_reg
+BP = 0.049988, df = 1, p-value = 0.8231</code></pre>
+</div>
+</div>
+<p>A homocedasticidade do modelo foi avaliada visualmente por meio do gráfico de dispersão dos resíduos padronizados versus os valores preditos, mostrando uma distribuição uniforme da variância. O pressuposto foi confirmado formalmente pelo teste de Breusch-Pagan (<span class="math inline">\(\chi^2 = \text{0.049988}\)</span>, <span class="math inline">\(p &gt; 0,05\)</span>).</p>
+</section>
+<section id="sec-dw" class="level3" data-number="18.5.4">
+<h3 data-number="18.5.4" class="anchored" data-anchor-id="sec-dw"><span class="header-section-number">18.5.4</span> Independência dos resíduos</h3>
+<p>Os resíduos no modelo devem ser independentes, ou seja, não devem ser correlacionados entre si. Para verificar isso, pode-se executar o <em>teste Durbin-Watson</em> - <code>teste dw</code> <span class="citation" data-cites="durbin1950testing">(<a href="#ref-durbin1950testing" role="doc-biblioref">5</a>)</span>, utilizando a função <code>car::durbinWatsonTest()</code> do pacote <code>car</code>. O teste retorna um valor entre 0 e 4. Um valor maior que 2 indica uma correlação negativa entre resíduos adjacentes, enquanto um valor menor que 2 indica uma correlação positiva. Se o valor for dois, é provável que exista independência. Existe uma sugestão de que valores abaixo de 1 ou mais de 3 são um motivo definitivo de preocupação <span class="citation" data-cites="field2012regression">(<a href="#ref-field2012regression" role="doc-biblioref">3</a>)</span>. É importante mencionar que o teste tem como pressuposto a normalidade dos dados.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">durbinWatsonTest</span>(mod_reg)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> lag Autocorrelation D-W Statistic p-value
+   1      -0.1044054      2.204843   0.664
+ Alternative hypothesis: rho != 0</code></pre>
+</div>
+</div>
+<p>Na saída do teste o valor <em>p</em> &gt; 0,05 e a estatística DW é igual a 2,2, não se rejeita a hipótese nula de independência (rho = 0).</p>
+</section>
+</section>
+<section id="tamanho-amostral-na-regressão" class="level2" data-number="18.6">
+<h2 data-number="18.6" class="anchored" data-anchor-id="tamanho-amostral-na-regressão"><span class="header-section-number">18.6</span> Tamanho amostral na regressão</h2>
+<p>O tamanho da amostra deve ser suficiente para suportar o modelo de regressão. É importante coletar dados suficientes para obter um modelo de regressão confiável. O tamanho da amostra necessário para suportar um modelo depende do valor do coeficiente de correlação do modelo (no caso da correlação linear simples é o <em>r</em> de Pearson) e do número de variáveis incluídas.</p>
+<p>A <a href="#tbl-samplesize" class="quarto-xref">Tabela&nbsp;<span>18.1</span></a> mostra o número de participantes necessários em modelos com 1 a 4 preditores independentes. Como se observa, o requisito de tamanho da amostra aumenta com o número de variáveis preditoras <span class="citation" data-cites="peat2014regression">(<a href="#ref-peat2014regression" role="doc-biblioref">6</a>)</span>.</p>
+<div class="cell">
+<div id="tbl-samplesize" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-samplesize-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabela&nbsp;18.1: Tamanho amostral para regressão de acordo com o r de Pearson e o número de preditores
+</figcaption>
+<div aria-describedby="tbl-samplesize-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<div class="tabwid"><style>.cl-1f594f56{}.cl-1f4e3b98{font-family:'Arial';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-1f4e3bb6{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-1f52300e{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-1f5268a8{width:1.5in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-1f5268bc{width:0.752in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-1f5268bd{width:1.5in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-1f5268c6{width:0.752in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-1f5268c7{width:1.5in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-1f5268c8{width:0.752in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-1f5268d0{width:1.5in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-1f5268d1{width:0.752in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-1f594f56"><thead><tr style="overflow-wrap:break-word;"><th class="cl-1f5268a8"><p class="cl-1f52300e"><span class="cl-1f4e3b98"></span></p></th><th colspan="4" class="cl-1f5268a8"><p class="cl-1f52300e"><span class="cl-1f4e3b98">Número de Variáveis Preditoras</span></p></th></tr><tr style="overflow-wrap:break-word;"><th class="cl-1f5268bd"><p class="cl-1f52300e"><span class="cl-1f4e3b98">r de Pearson</span></p></th><th class="cl-1f5268bd"><p class="cl-1f52300e"><span class="cl-1f4e3b98">Uma</span></p></th><th class="cl-1f5268bd"><p class="cl-1f52300e"><span class="cl-1f4e3b98">Duas</span></p></th><th class="cl-1f5268bd"><p class="cl-1f52300e"><span class="cl-1f4e3b98">Três</span></p></th><th class="cl-1f5268c6"><p class="cl-1f52300e"><span class="cl-1f4e3b98">Quatro</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-1f5268c7"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">0.2</span></p></td><td class="cl-1f5268c7"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">190</span></p></td><td class="cl-1f5268c7"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">230</span></p></td><td class="cl-1f5268c7"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">265</span></p></td><td class="cl-1f5268c8"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">290</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-1f5268c7"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">0.3</span></p></td><td class="cl-1f5268c7"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">80</span></p></td><td class="cl-1f5268c7"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">100</span></p></td><td class="cl-1f5268c7"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">115</span></p></td><td class="cl-1f5268c8"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">125</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-1f5268d0"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">0.4</span></p></td><td class="cl-1f5268d0"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">45</span></p></td><td class="cl-1f5268d0"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">55</span></p></td><td class="cl-1f5268d0"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">65</span></p></td><td class="cl-1f5268d1"><p class="cl-1f52300e"><span class="cl-1f4e3bb6">70</span></p></td></tr></tbody></table></div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Existem muitas regras práticas, sugerindo o tamanho da amostra. Uma delas, diz que se deve ter 10 a 15 casos por variável preditora no modelo. Entretanto, essas regras podem ser duvidosas e o melhor é calcular o tamanho amostral baseado no tamanho do efeito, usando, por exemplo o site <a href="https://www.statstodo.com/SSizMulReg.php"><em>StatToDo</em></a> ou com o software <em>GPower</em> 3.1.9.7 <span class="citation" data-cites="faul2007g">(<a href="#ref-faul2007g" role="doc-biblioref">7</a>)</span>.</p>
+</section>
+<section id="interpretação-do-modelo-de-regressão-linear-simples" class="level2" data-number="18.7">
+<h2 data-number="18.7" class="anchored" data-anchor-id="interpretação-do-modelo-de-regressão-linear-simples"><span class="header-section-number">18.7</span> Interpretação do modelo de regressão linear simples</h2>
+<p>O modelo linear já foi realizado (<a href="#sec-residuos" class="quarto-xref"><span>Seção 18.4</span></a>) e será repetido aqui para facilitar a visualização. A função <code>summary()</code> imprime o resumo do modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>mod_reg <span class="ot">&lt;-</span> <span class="fu">lm</span> (comp <span class="sc">~</span> idade, dados)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span> (mod_reg)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = comp ~ idade, data = dados)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.2033 -1.2033  0.0899  1.2585  3.4922 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 61.44408    1.36466   45.02   &lt;2e-16 ***
+idade        1.06515    0.04967   21.45   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.678 on 38 degrees of freedom
+Multiple R-squared:  0.9237,    Adjusted R-squared:  0.9217 
+F-statistic: 459.9 on 1 and 38 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>A saída da função <code>summary()</code>, primeiro apresenta como o modelo foi obtido e, em seguida, resume os resíduos do modelo. Por último, tem-se os <code>Coeficientes</code>:</p>
+<ol type="1">
+<li>As estimativas (<em>Estimate</em>) para os parâmetros do modelo - o valor do intercepto <em>y</em> (neste caso, 61,44) e o efeito estimado da idade sobre o comprimento (1,1)- significam que para cada unidade de aumento na idade se espera um aumento de 1,1 cm no comprimento.</li>
+<li>O erro padrão dos valores estimados (<em>Std. Error</em>).</li>
+<li>A estatística de teste (<em>t value</em>)</li>
+<li>O valor <em>P</em> (Pr (&gt;| t |)), também conhecido como a probabilidade de encontrar a estatística <em>t</em> fornecida se a hipótese nula de nenhuma correlação for verdadeira.<br>
+</li>
+<li>As três linhas finais são os diagnósticos do modelo - o mais importante a observar é o valor <em>p</em> (<span class="math inline">\(2,2\times 10^{-16}\)</span>), que indica se o modelo se ajusta bem aos dados.</li>
+</ol>
+<p>A partir desses resultados, pode-se dizer que existe uma correlação positiva significativa entre idade e comprimento (valor P &lt; 0,001), com um aumento de 1,1 cm no comprimento para cada aumento de 1 mês na idade , possibilitando a previsão do comprimento da criança conhecendo a idade.</p>
+<p>Estes dados são empregados para formular a equação do modelo de regressão da seguinte maneira:</p>
+<p><span class="math display">\[\hat {y} = 61,44 + 1,1 x\]</span></p>
+<p>O erro padrão das estimativas são fornecidos. Esses dados permitem calcular o IC95%. Ou pode-se usar a função <code>confint()</code> do pacote <code>stats</code>, que será colocada dentro da função <code>round()</code> para arredondar os valores até um dígito.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span> (<span class="fu">confint</span> (mod_reg, <span class="at">level =</span> <span class="fl">0.95</span>), <span class="dv">1</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 % 97.5 %
+(Intercept)  58.7   64.2
+idade         1.0    1.2</code></pre>
+</div>
+</div>
+<p>Dessa forma, é possível prever que uma criança de 30 meses, de acordo com o modelo, terá o seguinte comprimento:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>comp_30m <span class="ot">&lt;-</span> <span class="fl">61.4</span> <span class="sc">+</span> <span class="fl">1.1</span> <span class="sc">*</span> <span class="dv">30</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>comp_30m</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 94.4</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>lim.sup <span class="ot">&lt;-</span> <span class="fl">64.2</span> <span class="sc">+</span> <span class="fl">1.2</span><span class="sc">*</span><span class="dv">30</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>lim.inf <span class="ot">&lt;-</span> <span class="fl">58.7</span> <span class="sc">+</span> <span class="fl">1.0</span><span class="sc">*</span><span class="dv">30</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (<span class="fu">c</span>(lim.inf, lim.sup))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  88.7 100.2</code></pre>
+</div>
+</div>
+<p>Ou seja, espera-se que uma criança tenha, aos 30 meses de idade, um comprimento médio de 94,4 cm (IC95%: 88,7-100,2)</p>
+</section>
+<section id="visualização-dos-resultados" class="level2 page-columns page-full" data-number="18.8">
+<h2 data-number="18.8" class="anchored" data-anchor-id="visualização-dos-resultados"><span class="header-section-number">18.8</span> Visualização dos resultados</h2>
+<p>Será obtido um gráfico de dispersão com a reta de regressão e seu intervalo de confiança de 95% (<a href="#fig-resreg" class="quarto-xref">Figura&nbsp;<span>18.7</span></a>). Além disso, adicionou-se a equação do modelo<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> de regressão (o R arredondou os valores), juntamente com o coeficiente de determinação <span class="math inline">\(R^{2}\)</span>.</p>
+<div class="no-row-height column-margin column-container"><div id="fn3"><p><sup>3</sup>&nbsp;Usou a função <code>stat_regline_equation()</code> do pacote <code>ggpubr</code>.</p></div></div><div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span> (dados, <span class="fu">aes</span> (<span class="at">x =</span> idade, <span class="at">y =</span> comp)) <span class="sc">+</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span> (<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span> (<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>, <span class="at">color =</span> <span class="st">"tomato"</span>) <span class="sc">+</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_regline_equation</span>(<span class="at">label.y =</span> <span class="dv">100</span>, <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">after_stat</span>(eq.label))) <span class="sc">+</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_regline_equation</span>(<span class="at">label.y =</span> <span class="dv">99</span>,  <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">after_stat</span>(rr.label))) <span class="sc">+</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span> () <span class="sc">+</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span> (<span class="st">"Idade (meses)"</span>) <span class="sc">+</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span> (<span class="st">"Comprimento(cm)"</span>) <span class="sc">+</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span> (<span class="at">text =</span> <span class="fu">element_text</span> (<span class="at">size =</span> <span class="dv">12</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-resreg" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-resreg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="18-regressao_files/figure-html/fig-resreg-1.png" class="quarto-figure quarto-figure-center figure-img" style="width:70.0%;height:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-resreg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;18.7: Resultado da Regressão Linear
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>No gráfico, o intervalo de previsão médio de 95% em torno da reta de regressão é um intervalo de confiança de 95%, ou seja, a área na qual há 95% de certeza de que a reta de regressão verdadeira se encontra <span class="citation" data-cites="altman1988statistics">(<a href="#ref-altman1988statistics" role="doc-biblioref">8</a>)</span>. Esta banda de intervalo é levemente curvada porque os erros na estimativa do intercepto e da inclinação são incluídos em adição ao erro na previsão da variável desfecho.</p>
+<p>Se for observado, o IC95% da reta de regressão obtida pelo <code>ggplot2</code> difere um pouco do IC95% da função <code>confint()</code>. Isto ocorre porque:</p>
+<ul>
+<li>quando se usa <code>geom_smooth(method = "lm", se = TRUE)</code>, o intervalo de confiança gerado é baseado na incerteza da <strong>previsão média</strong> da regressão. Ou seja, ele mostra a faixa onde se espera que a média da variável dependente (<code>comp</code>) esteja para um determinado valor da variável independente (<code>idade</code>) e<br>
+</li>
+<li>quando se usa a função <code>confint()</code>, ela retorna o intervalo de confiança dos <strong>coeficientes</strong> do modelo de regressão. Ou seja, ela fornece a incerteza associada aos parâmetros estimados (incluindo o intercepto e os coeficientes das variáveis preditoras).</li>
+</ul>
+<p>A principal diferença, portanto, é que o intervalo de confiança do <code>ggplot2</code> reflete a incerteza da linha de regressão ajustada, enquanto <code>confint()</code> fornece a incerteza dos parâmetros do modelo.</p>
+
+
+<!-- -->
+
+</section>
+<section id="bibliography" class="level1 unnumbered">
+<h1 class="unnumbered">Referências</h1>
+<div id="refs" class="references csl-bib-body" role="list">
+<div id="ref-sedgwick2013correlation" class="csl-entry" role="listitem">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Sedgwick P. Correlation versus linear regression. BMJ. 2013;346. </div>
+</div>
+<div id="ref-kim2019statistical" class="csl-entry" role="listitem">
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">Kim H-Y. Statistical notes for clinical researchers: simple linear regression 3–residual analysis. Restorative dentistry &amp; endodontics. 2019;44(1). </div>
+</div>
+<div id="ref-field2012regression" class="csl-entry" role="listitem">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Field A, Miles J, Field Z. Regression. Em: Discovering statistics using R. Sage Publications, Ltd; 2012. p. 266–76. </div>
+</div>
+<div id="ref-hothorn2015lmtest" class="csl-entry" role="listitem">
+<div class="csl-left-margin">4. </div><div class="csl-right-inline">Hothorn T, Zeileis A, Farebrother RW, et al. Package <span>«lmtest»</span>. Testing linear regression models https://cran r-project org/web/packages/lmtest/lmtest pdf Accessed. 2015;6. </div>
+</div>
+<div id="ref-durbin1950testing" class="csl-entry" role="listitem">
+<div class="csl-left-margin">5. </div><div class="csl-right-inline">Durbin J, Watson GS. Testing for serial correlation in least squares regression: I. Biometrika. 1950;37(3/4):409–28. </div>
+</div>
+<div id="ref-peat2014regression" class="csl-entry" role="listitem">
+<div class="csl-left-margin">6. </div><div class="csl-right-inline">Peat J, Barton B. Correlation and regression. Em: Medical statistics : a guide to SPSS, data analysis, and critical appraisal. New York, NY: John Wiley &amp; Sons; 2014. p. 209. </div>
+</div>
+<div id="ref-faul2007g" class="csl-entry" role="listitem">
+<div class="csl-left-margin">7. </div><div class="csl-right-inline">Faul F, Erdfelder E, Lang A-G, Buchner A. G* Power 3: A flexible statistical power analysis program for the social, behavioral, and biomedical sciences. Behavior research methods. 2007;39(2):175–91. </div>
+</div>
+<div id="ref-altman1988statistics" class="csl-entry" role="listitem">
+<div class="csl-left-margin">8. </div><div class="csl-right-inline">Altman DG, Gardner MJ. Statistics in Medicine: Calculating confidence intervals for regression and correlation. British Medical Journal (Clinical research ed). 1988;296(6631):1238. </div>
+</div>
+</div>
+</section>
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiada");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiada");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./17-correlacao.html" class="pagination-link" aria-label="Correlação">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Correlação</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./19-dadoscategoricos.html" class="pagination-link" aria-label="Análise de Dados Categóricos">
+        <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Análise de Dados Categóricos</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Código fonte</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb40" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Regressão Linear Simples {#sec-rls}</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Pacotes usados neste capítulo</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(car,</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>               flextable,</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>               ggpubr,</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>               knitr,</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>               lmtest,</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>               readxl,</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>               rstatix,</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>               tidyverse)</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introdução</span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>A *regressão linear simples*, assim como a correlação, é uma técnica usada para explorar a natureza da relação entre duas variáveis aleatórias contínuas. A principal diferença entre esses dois métodos analíticos é que a regressão permite investigar a alteração em uma variável, chamada *resposta*, correspondente a uma determinada alteração em outra, conhecida como variável *explicativa*. A regressão é um modelo matemático que permite a *predição* de uma variável resposta a partir de uma outra variável explicativa. A análise de correlação quantifica a força da relação entre as variáveis, tratando-as simetricamente <span class="co">[</span><span class="ot">@sedgwick2013correlation</span><span class="co">]</span>.</span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>A *regressão linear simples* é chamada assim, porque existe apenas uma variável independente. Se houver mais de uma variável independente, é chamada de *regressão múltipla*.</span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>A representação matemática do modelo de regressão linear populacional é descrita pela equação da reta de melhor ajuste em um conjunto de pares de dados (x, y) em um gráfico de dispersão de pontos.</span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a>$$y = \beta_{0} + \beta_{1}x$$</span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a><span class="al">![Reta de regressão, coeficiente angular e coeficiente linear](images/reg_linear.png)</span>{#fig-retareg fig-align="center" width="14cm"}</span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a>A inclinação da reta de regressão ($\beta_{1}$) determina a variação de *y* para cada unidade de variação de *x* e recebe o nome de *coeficiente angular* ou *de regressão*. O ponto de interceptação da reta com *y* quando *x* é igual a zero é $\beta_{0}$ e é denominado de *coeficiente linear* (@fig-retareg). A equação da reta de regressão amostral que estima a reta de regressão populacional é igual a:</span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a>$$\hat {y} = b_{0} + b_{1}x$$</span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a>A reta do diagrama de dispersão da @fig-retareg é a melhor reta de ajuste aos dados.</span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dados usados no exemplo</span></span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a>Serão usados os mesmos dados do exemplo da Correlação (@sec-execor). A função <span class="in">`read_excel`</span> do pacote <span class="in">`readxl`</span> carregará o arquivo.</span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-44"><a href="#cb40-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-45"><a href="#cb40-45" aria-hidden="true" tabindex="-1"></a>dados <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"dados/dadosReg.xlsx"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb40-46"><a href="#cb40-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(idade, comp)</span>
+<span id="cb40-47"><a href="#cb40-47" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dados)</span>
+<span id="cb40-48"><a href="#cb40-48" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-49"><a href="#cb40-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-50"><a href="#cb40-50" aria-hidden="true" tabindex="-1"></a>Para revisar as estatísticas descritivas do conjunto de dados, será executado o seguinte código:</span>
+<span id="cb40-51"><a href="#cb40-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-54"><a href="#cb40-54" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-55"><a href="#cb40-55" aria-hidden="true" tabindex="-1"></a>dados <span class="sc">|&gt;</span> </span>
+<span id="cb40-56"><a href="#cb40-56" aria-hidden="true" tabindex="-1"></a>  rstatix<span class="sc">::</span><span class="fu">get_summary_stats</span>(idade,</span>
+<span id="cb40-57"><a href="#cb40-57" aria-hidden="true" tabindex="-1"></a>                             comp,</span>
+<span id="cb40-58"><a href="#cb40-58" aria-hidden="true" tabindex="-1"></a>                             <span class="at">type =</span> <span class="st">"mean_sd"</span>)</span>
+<span id="cb40-59"><a href="#cb40-59" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-60"><a href="#cb40-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-61"><a href="#cb40-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## Resíduos {#sec-residuos}</span></span>
+<span id="cb40-62"><a href="#cb40-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-63"><a href="#cb40-63" aria-hidden="true" tabindex="-1"></a>No exemplo usado na correlação (@sec-execor), verificou-se que existe uma correlação linear entre a idade e o comprimento de crianças, usando uma amostra de 40 crianças entre 18 e 36 meses. A correlação de Pearson foi muito forte (*r* = 0,96, *p* <span class="sc">\&lt;</span> 0,00001). Esta relação linear pode ser descrita pela reta, mostrada na @fig-retareg1.</span>
+<span id="cb40-64"><a href="#cb40-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-67"><a href="#cb40-67" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-68"><a href="#cb40-68" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-retareg1</span></span>
+<span id="cb40-69"><a href="#cb40-69" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb40-70"><a href="#cb40-70" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb40-71"><a href="#cb40-71" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-height: "70%"</span></span>
+<span id="cb40-72"><a href="#cb40-72" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb40-73"><a href="#cb40-73" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-align: "center"</span></span>
+<span id="cb40-74"><a href="#cb40-74" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Reta de regressão"</span></span>
+<span id="cb40-75"><a href="#cb40-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-76"><a href="#cb40-76" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(dados, </span>
+<span id="cb40-77"><a href="#cb40-77" aria-hidden="true" tabindex="-1"></a>                <span class="fu">aes</span>(<span class="at">x =</span> idade, </span>
+<span id="cb40-78"><a href="#cb40-78" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> comp,</span>
+<span id="cb40-79"><a href="#cb40-79" aria-hidden="true" tabindex="-1"></a>                    <span class="at">color =</span> <span class="st">"tomato"</span>)) <span class="sc">+</span></span>
+<span id="cb40-80"><a href="#cb40-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, </span>
+<span id="cb40-81"><a href="#cb40-81" aria-hidden="true" tabindex="-1"></a>              <span class="at">se =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb40-82"><a href="#cb40-82" aria-hidden="true" tabindex="-1"></a>              <span class="at">color =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb40-83"><a href="#cb40-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb40-84"><a href="#cb40-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb40-85"><a href="#cb40-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Idade (meses)"</span>) <span class="sc">+</span></span>
+<span id="cb40-86"><a href="#cb40-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Comprimento (cm)"</span>) <span class="sc">+</span></span>
+<span id="cb40-87"><a href="#cb40-87" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>)) <span class="sc">+</span></span>
+<span id="cb40-88"><a href="#cb40-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb40-89"><a href="#cb40-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-90"><a href="#cb40-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-91"><a href="#cb40-91" aria-hidden="true" tabindex="-1"></a>Não é possível traçar uma reta que passe por todos os pontos. Esta reta ideal descreveria uma correlação perfeita, que não é o caso. Pode haver várias retas, a reta calculada pela regressão linear é aquela que promove o melhor ajuste, ou seja, é aquela cuja distância dos pontos até a reta é a menor possível.</span>
+<span id="cb40-92"><a href="#cb40-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-93"><a href="#cb40-93" aria-hidden="true" tabindex="-1"></a>Os resíduos são a diferença entre o valor observado e o valor previsto pelo modelo de regressão linear, construído anteriormente (<span class="in">`mod_reg`</span>). A técnica estatística para achar a melhor reta que ajusta um conjunto de dados é denominada de **método dos mínimos quadrados** (*Ordinary Least Square*). A melhor reta ajustada é aquela em que a soma dos quadrados da distância de cada ponto (**soma dos quadrados residual**) em relação à reta é minimizada.</span>
+<span id="cb40-94"><a href="#cb40-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-95"><a href="#cb40-95" aria-hidden="true" tabindex="-1"></a>Para se obter os resíduos, ajusta-se um modelo de regressão, usando a função <span class="in">`lm()`</span><span class="ot">[^18-regressao-1]</span>, nativa do R:</span>
+<span id="cb40-96"><a href="#cb40-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-97"><a href="#cb40-97" aria-hidden="true" tabindex="-1"></a><span class="ot">[^18-regressao-1]: </span>lm = linear model</span>
+<span id="cb40-98"><a href="#cb40-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-101"><a href="#cb40-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-102"><a href="#cb40-102" aria-hidden="true" tabindex="-1"></a>mod_reg <span class="ot">&lt;-</span> <span class="fu">lm</span>(comp <span class="sc">~</span> idade, <span class="at">data =</span> dados)</span>
+<span id="cb40-103"><a href="#cb40-103" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-104"><a href="#cb40-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-105"><a href="#cb40-105" aria-hidden="true" tabindex="-1"></a>O modelo fornece uma série de variáveis que podem ser visualizadas com:</span>
+<span id="cb40-106"><a href="#cb40-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-109"><a href="#cb40-109" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-110"><a href="#cb40-110" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>(mod_reg)</span>
+<span id="cb40-111"><a href="#cb40-111" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-112"><a href="#cb40-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-113"><a href="#cb40-113" aria-hidden="true" tabindex="-1"></a>Assim, as variáveis <span class="in">`residuos`</span> e <span class="in">`preditos`</span> podem ser criadas no dataframe <span class="in">`dados`</span> da seguinte maneira:</span>
+<span id="cb40-114"><a href="#cb40-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-117"><a href="#cb40-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-118"><a href="#cb40-118" aria-hidden="true" tabindex="-1"></a>dados<span class="sc">$</span>residuos <span class="ot">&lt;-</span> <span class="fu">residuals</span>(mod_reg)</span>
+<span id="cb40-119"><a href="#cb40-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-120"><a href="#cb40-120" aria-hidden="true" tabindex="-1"></a>dados<span class="sc">$</span>preditos <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod_reg) </span>
+<span id="cb40-121"><a href="#cb40-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-122"><a href="#cb40-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-123"><a href="#cb40-123" aria-hidden="true" tabindex="-1"></a>Usando essas variáveis, pode-se criar o gráfico da @fig-residuos que mostra os resíduos do modelo:</span>
+<span id="cb40-124"><a href="#cb40-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-127"><a href="#cb40-127" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-128"><a href="#cb40-128" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-residuos</span></span>
+<span id="cb40-129"><a href="#cb40-129" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb40-130"><a href="#cb40-130" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb40-131"><a href="#cb40-131" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-height: "70%"</span></span>
+<span id="cb40-132"><a href="#cb40-132" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb40-133"><a href="#cb40-133" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-align: "center"</span></span>
+<span id="cb40-134"><a href="#cb40-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Resíduos do Modelo de Regressão Linear"</span></span>
+<span id="cb40-135"><a href="#cb40-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-136"><a href="#cb40-136" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(dados, </span>
+<span id="cb40-137"><a href="#cb40-137" aria-hidden="true" tabindex="-1"></a>                <span class="fu">aes</span>(<span class="at">x =</span> idade, </span>
+<span id="cb40-138"><a href="#cb40-138" aria-hidden="true" tabindex="-1"></a>                    <span class="at">y =</span> comp,</span>
+<span id="cb40-139"><a href="#cb40-139" aria-hidden="true" tabindex="-1"></a>                    <span class="at">color =</span> <span class="st">"tomato"</span>)) <span class="sc">+</span></span>
+<span id="cb40-140"><a href="#cb40-140" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, </span>
+<span id="cb40-141"><a href="#cb40-141" aria-hidden="true" tabindex="-1"></a>              <span class="at">se =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb40-142"><a href="#cb40-142" aria-hidden="true" tabindex="-1"></a>              <span class="at">color =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb40-143"><a href="#cb40-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">xend =</span> idade, </span>
+<span id="cb40-144"><a href="#cb40-144" aria-hidden="true" tabindex="-1"></a>                   <span class="at">yend =</span> preditos), </span>
+<span id="cb40-145"><a href="#cb40-145" aria-hidden="true" tabindex="-1"></a>               <span class="at">linewidth =</span> <span class="fl">0.8</span>,</span>
+<span id="cb40-146"><a href="#cb40-146" aria-hidden="true" tabindex="-1"></a>               <span class="at">linetype =</span> <span class="st">"dotted"</span>) <span class="sc">+</span></span>
+<span id="cb40-147"><a href="#cb40-147" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> preditos), </span>
+<span id="cb40-148"><a href="#cb40-148" aria-hidden="true" tabindex="-1"></a>             <span class="at">shape =</span> <span class="dv">19</span>,</span>
+<span id="cb40-149"><a href="#cb40-149" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">3</span>,</span>
+<span id="cb40-150"><a href="#cb40-150" aria-hidden="true" tabindex="-1"></a>             <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb40-151"><a href="#cb40-151" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb40-152"><a href="#cb40-152" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb40-153"><a href="#cb40-153" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Idade (meses)"</span>) <span class="sc">+</span></span>
+<span id="cb40-154"><a href="#cb40-154" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Comprimento (cm)"</span>) <span class="sc">+</span></span>
+<span id="cb40-155"><a href="#cb40-155" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>)) <span class="sc">+</span></span>
+<span id="cb40-156"><a href="#cb40-156" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb40-157"><a href="#cb40-157" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-158"><a href="#cb40-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-159"><a href="#cb40-159" aria-hidden="true" tabindex="-1"></a>Uma boa maneira de testar a qualidade do ajuste do modelo é observar os resíduos <span class="co">[</span><span class="ot">@kim2019statistical</span><span class="co">]</span> ou as diferenças entre os valores reais (pontos vermelhos) e os valores previstos (pontos azuis). A reta de regressão, em azul no gráfico, representa os valores previstos. A linha vertical pontilhada da linha reta até o valor dos dados observados é o **resíduo**.</span>
+<span id="cb40-160"><a href="#cb40-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-161"><a href="#cb40-161" aria-hidden="true" tabindex="-1"></a>A ideia aqui é que a soma dos resíduos seja aproximadamente zero ou o mais baixo possível. Na vida real, a maioria dos casos não seguirá uma linha perfeitamente reta, portanto, resíduos são esperados. Na saída do resumo da função <span class="in">`lm()`</span> em (<span class="in">`mod_reg$residuals`</span>) aparecem estatísticas descritivas sobre os resíduos do modelo (*residuals*), elas mostram como os resíduos são aproximadamente zero. Pode-se observar isso, usando a função <span class="in">`summary ()`</span> e <span class="in">`sum()`</span>:</span>
+<span id="cb40-162"><a href="#cb40-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-165"><a href="#cb40-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-166"><a href="#cb40-166" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_reg<span class="sc">$</span>residuals)</span>
+<span id="cb40-167"><a href="#cb40-167" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(mod_reg<span class="sc">$</span>residuals)</span>
+<span id="cb40-168"><a href="#cb40-168" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-169"><a href="#cb40-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-170"><a href="#cb40-170" aria-hidden="true" tabindex="-1"></a>Como se observa, a soma dos resíduos é praticamente igual a zero ($-3{,}54 \times 10^{-15}$).</span>
+<span id="cb40-171"><a href="#cb40-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-172"><a href="#cb40-172" aria-hidden="true" tabindex="-1"></a><span class="fu">## Análise dos pressupostos do modelo de regressão</span></span>
+<span id="cb40-173"><a href="#cb40-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-174"><a href="#cb40-174" aria-hidden="true" tabindex="-1"></a><span class="fu">### Avaliação da normalidade dos resíduos</span></span>
+<span id="cb40-175"><a href="#cb40-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-176"><a href="#cb40-176" aria-hidden="true" tabindex="-1"></a>Ao analisar os pressupostos da correlação, foi realizada a avaliação da normalidade nos dados brutos. Na regressão, o foco muda quase que totalmente para os **resíduos** (os erros do modelo: $y - \hat{y}$), porque o objetivo é prever *y* a partir de *x* .</span>
+<span id="cb40-177"><a href="#cb40-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-178"><a href="#cb40-178" aria-hidden="true" tabindex="-1"></a>O correto é avaliar os pressupostos sobre os resíduos do modelo como um todo. Estes resíduos encontram-se, como visto, na variável <span class="in">`resíduos`</span> extraída do modelo de regressão (<span class="in">`mod_reg`</span>).</span>
+<span id="cb40-179"><a href="#cb40-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-180"><a href="#cb40-180" aria-hidden="true" tabindex="-1"></a>Dessa forma, a função <span class="in">`shapiro_test()`</span> do pacote <span class="in">`rstatix`</span>:</span>
+<span id="cb40-181"><a href="#cb40-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-184"><a href="#cb40-184" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-185"><a href="#cb40-185" aria-hidden="true" tabindex="-1"></a>dados <span class="sc">|&gt;</span> </span>
+<span id="cb40-186"><a href="#cb40-186" aria-hidden="true" tabindex="-1"></a>  rstatix<span class="sc">::</span><span class="fu">shapiro_test</span>(residuos)</span>
+<span id="cb40-187"><a href="#cb40-187" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-188"><a href="#cb40-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-189"><a href="#cb40-189" aria-hidden="true" tabindex="-1"></a>Pode-se observar isso, gerando o QQ plot dos resíduos com <span class="in">`ggpubr::ggqqplot()`</span>:</span>
+<span id="cb40-190"><a href="#cb40-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-193"><a href="#cb40-193" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-194"><a href="#cb40-194" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-rlnorm</span></span>
+<span id="cb40-195"><a href="#cb40-195" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb40-196"><a href="#cb40-196" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb40-197"><a href="#cb40-197" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-align: "center"</span></span>
+<span id="cb40-198"><a href="#cb40-198" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-height: "70%"</span></span>
+<span id="cb40-199"><a href="#cb40-199" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb40-200"><a href="#cb40-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Gráfico QQ para verificar a normalidade dos resíduos na RL"</span></span>
+<span id="cb40-201"><a href="#cb40-201" aria-hidden="true" tabindex="-1"></a>ggpubr<span class="sc">::</span><span class="fu">ggqqplot</span>(<span class="at">data =</span> dados,</span>
+<span id="cb40-202"><a href="#cb40-202" aria-hidden="true" tabindex="-1"></a>                 <span class="at">x =</span> <span class="st">"residuos"</span>,</span>
+<span id="cb40-203"><a href="#cb40-203" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"steelblue4"</span>,</span>
+<span id="cb40-204"><a href="#cb40-204" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">"Quantis normais"</span>, </span>
+<span id="cb40-205"><a href="#cb40-205" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ylab =</span> <span class="st">"Residuos"</span>,</span>
+<span id="cb40-206"><a href="#cb40-206" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ggtheme =</span> <span class="fu">theme_bw</span>())</span>
+<span id="cb40-207"><a href="#cb40-207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-208"><a href="#cb40-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-209"><a href="#cb40-209" aria-hidden="true" tabindex="-1"></a>A saída do teste de Shapiro-Wilk mostra um valor *p* <span class="sc">\&gt;</span> 0,05 e pode-se decidir que não há evidência de violação da normalidade. Fato reforçado pela @fig-rlnorm que mostra que os pontos acompanham a reta de referência.</span>
+<span id="cb40-210"><a href="#cb40-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-211"><a href="#cb40-211" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pesquisa de valores atípicos nos resíduos</span></span>
+<span id="cb40-212"><a href="#cb40-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-213"><a href="#cb40-213" aria-hidden="true" tabindex="-1"></a>Uma maneira de avaliar os valores atípicos, é transformar os resíduos em resíduos padronizados e verificar a distribuição desses, sabendo que em uma amostra normalmente distribuída, ao redor de 95% dos valores estão entre –1,96 e +1,96 desvios padrão; 99% deve estar entre –2,58 e +2,58 e quase todos (99,9%) devem se situar entre –3,09 e +3,09 desvios padrão <span class="ot">[^18-regressao-2]</span>.</span>
+<span id="cb40-214"><a href="#cb40-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-215"><a href="#cb40-215" aria-hidden="true" tabindex="-1"></a><span class="ot">[^18-regressao-2]: </span>**Regra prática:** Resíduos além de $\pm 2$ acendem um sinal amarelo (merecem atenção) e resíduos além de $\pm 3$ são formalmente classificados como ***outliers***estatísticos (sinal vermelho).</span>
+<span id="cb40-216"><a href="#cb40-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-217"><a href="#cb40-217" aria-hidden="true" tabindex="-1"></a>Existe uma função denominada <span class="in">`rstandard()`</span>, também nativa do R, que padroniza os resíduos do <span class="in">`mod_reg`</span>. Assim, pode-se criar uma variável no conjunto <span class="in">`dados`</span> com esses resíduos padronizados e fazer um sumário, usando a função <span class="in">`summary()`</span>. Esta função exibirá a estatística dos 5 números mais a média para os resíduos padronizados:</span>
+<span id="cb40-218"><a href="#cb40-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-221"><a href="#cb40-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-222"><a href="#cb40-222" aria-hidden="true" tabindex="-1"></a>dados<span class="sc">$</span>residuos_p <span class="ot">&lt;-</span> <span class="fu">rstandard</span>(mod_reg)</span>
+<span id="cb40-223"><a href="#cb40-223" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dados<span class="sc">$</span>residuos_p)</span>
+<span id="cb40-224"><a href="#cb40-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-225"><a href="#cb40-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-226"><a href="#cb40-226" aria-hidden="true" tabindex="-1"></a>A saída mostra que não há resíduos padronizados com um valor absoluto maior que 3. Acima deste valor existe motivo de preocupação porque em uma amostra média é improvável que aconteça um valor tão alto por acaso <span class="co">[</span><span class="ot">@field2012regression</span><span class="co">]</span>.</span>
+<span id="cb40-227"><a href="#cb40-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-228"><a href="#cb40-228" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Distância de Cook</span></span>
+<span id="cb40-229"><a href="#cb40-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-230"><a href="#cb40-230" aria-hidden="true" tabindex="-1"></a>Olhar apenas para o resíduo padronizado mede o quão distante o ponto está da reta na vertical (*y*). Mas na regressão linear, um *outlier* perigoso é aquele que tem o poder de **distorcer a reta**. Por isso, é interessante avaliar métricas complementares como a **distância de Cook**. Ela avalia o quanto a sua reta de regressão mudaria se aquele ponto específico fosse deletado.\</span>
+<span id="cb40-231"><a href="#cb40-231" aria-hidden="true" tabindex="-1"></a>Pontos com Distância de Cook maiores que 1 (ou maiores que $4/n$, onde $n$ é o tamanho da amostra) são considerados pontos de alta influência. Mesmo que o resíduo padronizado não seja gigante, se ele altera a reta, ele é um <span class="in">`outlier`</span> problemático.</span>
+<span id="cb40-232"><a href="#cb40-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-233"><a href="#cb40-233" aria-hidden="true" tabindex="-1"></a>A distância de Cook pode ser obtida pela função <span class="in">`cooks.distance()`</span> com o modelo de regressão:</span>
+<span id="cb40-234"><a href="#cb40-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-237"><a href="#cb40-237" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-238"><a href="#cb40-238" aria-hidden="true" tabindex="-1"></a>dados<span class="sc">$</span>d_cook <span class="ot">&lt;-</span> <span class="fu">cooks.distance</span>(mod_reg)</span>
+<span id="cb40-239"><a href="#cb40-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-240"><a href="#cb40-240" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dados<span class="sc">$</span>d_cook)</span>
+<span id="cb40-241"><a href="#cb40-241" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-242"><a href="#cb40-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-245"><a href="#cb40-245" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-246"><a href="#cb40-246" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="fu">nrow</span>(dados)</span>
+<span id="cb40-247"><a href="#cb40-247" aria-hidden="true" tabindex="-1"></a>limite <span class="ot">&lt;-</span> <span class="dv">4</span><span class="sc">/</span>n</span>
+<span id="cb40-248"><a href="#cb40-248" aria-hidden="true" tabindex="-1"></a>limite</span>
+<span id="cb40-249"><a href="#cb40-249" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-250"><a href="#cb40-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-251"><a href="#cb40-251" aria-hidden="true" tabindex="-1"></a>A saída do sumário mostra que não existem valores de distância de Cook superiores ao limite definido. Isso pode ser observado na @fig-cook.</span>
+<span id="cb40-252"><a href="#cb40-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-255"><a href="#cb40-255" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-256"><a href="#cb40-256" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-cook</span></span>
+<span id="cb40-257"><a href="#cb40-257" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb40-258"><a href="#cb40-258" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb40-259"><a href="#cb40-259" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-align: "center"</span></span>
+<span id="cb40-260"><a href="#cb40-260" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-height: "70%"</span></span>
+<span id="cb40-261"><a href="#cb40-261" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb40-262"><a href="#cb40-262" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Gráfico Diagnóstico: Resíduos padronizados vs. Alavancagem"</span></span>
+<span id="cb40-263"><a href="#cb40-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-264"><a href="#cb40-264" aria-hidden="true" tabindex="-1"></a>dados<span class="sc">$</span>alavancagem <span class="ot">&lt;-</span> <span class="fu">hatvalues</span>(mod_reg)</span>
+<span id="cb40-265"><a href="#cb40-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-266"><a href="#cb40-266" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Número de parâmetros(intercepto + inclinação)</span></span>
+<span id="cb40-267"><a href="#cb40-267" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="co"># Número de parâmetros </span></span>
+<span id="cb40-268"><a href="#cb40-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-269"><a href="#cb40-269" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Criar a função matemática correta baseada no limite dos dados</span></span>
+<span id="cb40-270"><a href="#cb40-270" aria-hidden="true" tabindex="-1"></a>cook_limite <span class="ot">&lt;-</span> <span class="cf">function</span>(leverage, cook_d, <span class="at">k_param =</span> k) {</span>
+<span id="cb40-271"><a href="#cb40-271" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Adiciona um tratamento para evitar divisão por zero</span></span>
+<span id="cb40-272"><a href="#cb40-272" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ifelse</span>(leverage <span class="sc">&lt;=</span> <span class="dv">0</span>, <span class="cn">NA</span>, <span class="fu">sqrt</span>((cook_d <span class="sc">*</span> k_param <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> leverage)) <span class="sc">/</span> leverage))</span>
+<span id="cb40-273"><a href="#cb40-273" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-274"><a href="#cb40-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-275"><a href="#cb40-275" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Gerar o grid focando na escala real da sua alavancagem (de 0 a 0.10)</span></span>
+<span id="cb40-276"><a href="#cb40-276" aria-hidden="true" tabindex="-1"></a>grid_cook <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">alavancagem =</span> <span class="fu">seq</span>(<span class="fl">0.001</span>, <span class="fu">max</span>(dados<span class="sc">$</span>alavancagem) <span class="sc">*</span> <span class="fl">1.1</span>, <span class="at">length.out =</span> <span class="dv">200</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb40-277"><a href="#cb40-277" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb40-278"><a href="#cb40-278" aria-hidden="true" tabindex="-1"></a>    <span class="at">cook_05_pos =</span> <span class="fu">cook_limite</span>(alavancagem, <span class="fl">0.5</span>),</span>
+<span id="cb40-279"><a href="#cb40-279" aria-hidden="true" tabindex="-1"></a>    <span class="at">cook_05_neg =</span> <span class="sc">-</span><span class="fu">cook_limite</span>(alavancagem, <span class="fl">0.5</span>)</span>
+<span id="cb40-280"><a href="#cb40-280" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb40-281"><a href="#cb40-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-282"><a href="#cb40-282" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Montar o gráfico definitivo</span></span>
+<span id="cb40-283"><a href="#cb40-283" aria-hidden="true" tabindex="-1"></a>dados <span class="sc">|&gt;</span>  </span>
+<span id="cb40-284"><a href="#cb40-284" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> alavancagem, <span class="at">y =</span> residuos_p)) <span class="sc">+</span> </span>
+<span id="cb40-285"><a href="#cb40-285" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-286"><a href="#cb40-286" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Linhas da Distância de Cook</span></span>
+<span id="cb40-287"><a href="#cb40-287" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> grid_cook, <span class="fu">aes</span>(<span class="at">y =</span> cook_05_pos), <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb40-288"><a href="#cb40-288" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> grid_cook, <span class="fu">aes</span>(<span class="at">y =</span> cook_05_neg), <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb40-289"><a href="#cb40-289" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-290"><a href="#cb40-290" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Texto indicador ajustado para os dados</span></span>
+<span id="cb40-291"><a href="#cb40-291" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, </span>
+<span id="cb40-292"><a href="#cb40-292" aria-hidden="true" tabindex="-1"></a>           <span class="at">x =</span> <span class="fu">max</span>(dados<span class="sc">$</span>alavancagem), </span>
+<span id="cb40-293"><a href="#cb40-293" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> <span class="fu">cook_limite</span>(<span class="fu">max</span>(dados<span class="sc">$</span>alavancagem), <span class="fl">0.5</span>) <span class="sc">+</span> <span class="fl">0.4</span>, <span class="co"># Linha + uma folguinha para cima</span></span>
+<span id="cb40-294"><a href="#cb40-294" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"Cook's d = 0.5"</span>, </span>
+<span id="cb40-295"><a href="#cb40-295" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"red"</span>, </span>
+<span id="cb40-296"><a href="#cb40-296" aria-hidden="true" tabindex="-1"></a>           <span class="at">size =</span> <span class="dv">3</span>, </span>
+<span id="cb40-297"><a href="#cb40-297" aria-hidden="true" tabindex="-1"></a>           <span class="at">hjust =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb40-298"><a href="#cb40-298" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-299"><a href="#cb40-299" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Dados e a curva loess</span></span>
+<span id="cb40-300"><a href="#cb40-300" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb40-301"><a href="#cb40-301" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb40-302"><a href="#cb40-302" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">'dashed'</span>, <span class="at">col =</span> <span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb40-303"><a href="#cb40-303" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-304"><a href="#cb40-304" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Zoom sem quebrar o cálculo das linhas</span></span>
+<span id="cb40-305"><a href="#cb40-305" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>)) <span class="sc">+</span> </span>
+<span id="cb40-306"><a href="#cb40-306" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-307"><a href="#cb40-307" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Ajuste fino das quebras do eixo Y para melhor a estética visual</span></span>
+<span id="cb40-308"><a href="#cb40-308" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="at">by =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb40-309"><a href="#cb40-309" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-310"><a href="#cb40-310" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"alavancagem"</span>, <span class="at">y =</span> <span class="st">"residuos_p"</span>) <span class="sc">+</span></span>
+<span id="cb40-311"><a href="#cb40-311" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb40-312"><a href="#cb40-312" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-313"><a href="#cb40-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-314"><a href="#cb40-314" aria-hidden="true" tabindex="-1"></a>Resumindo:</span>
+<span id="cb40-315"><a href="#cb40-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-316"><a href="#cb40-316" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ausência de pontos influentes: A linha vermelha de Cook está lá no topo, isolada, e nenhum ponto sequer ameaça chegar perto dela.</span>
+<span id="cb40-317"><a href="#cb40-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-318"><a href="#cb40-318" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Linearidade bem resolvida: A linha azul na @fig-cook oscila muito timidamente bem próxima da linha vermelha tracejada do zero, mostrando que não há desvios sistemáticos.</span>
+<span id="cb40-319"><a href="#cb40-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-320"><a href="#cb40-320" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Boa distribuição: A grande massa de dados tem resíduos padronizados confortavelmente situados entre -2 e 2.</span>
+<span id="cb40-321"><a href="#cb40-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-322"><a href="#cb40-322" aria-hidden="true" tabindex="-1"></a><span class="fu">### Homocedasticidade dos resíduos {#sec-BP}</span></span>
+<span id="cb40-323"><a href="#cb40-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-324"><a href="#cb40-324" aria-hidden="true" tabindex="-1"></a>Na regressão linear simples, a análise da homocedasticidade significa verificar se a variabilidade dos resíduos (erros) permanece constante ao longo de todos os valores previstos pelo modelo. Em termos simples: o modelo não pode ser mais preciso em uma idade e essencialmente um palpite em outra.</span>
+<span id="cb40-325"><a href="#cb40-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-326"><a href="#cb40-326" aria-hidden="true" tabindex="-1"></a>Para fazer essa análise de forma robusta na prática, você deve combinar a análise visual (a mais importante e recomendada) com um teste estatístico formal.</span>
+<span id="cb40-327"><a href="#cb40-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-328"><a href="#cb40-328" aria-hidden="true" tabindex="-1"></a>A melhor forma de diagnosticar a homocedasticidade é gerando os gráficos baseados nos resíduos do modelo. Plotar os **Resíduos Padronizados** versus **Valores Ajustados** (Fitted Values), variável <span class="in">`preditos`</span> no conjunto <span class="in">`dados`</span>.</span>
+<span id="cb40-329"><a href="#cb40-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-332"><a href="#cb40-332" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-333"><a href="#cb40-333" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-homo</span></span>
+<span id="cb40-334"><a href="#cb40-334" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb40-335"><a href="#cb40-335" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb40-336"><a href="#cb40-336" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-align: "center"</span></span>
+<span id="cb40-337"><a href="#cb40-337" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-height: "70%"</span></span>
+<span id="cb40-338"><a href="#cb40-338" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb40-339"><a href="#cb40-339" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Gráfico Diagnóstico: Resíduos padronizados vs. Valores Ajustados"</span></span>
+<span id="cb40-340"><a href="#cb40-340" aria-hidden="true" tabindex="-1"></a>dados <span class="sc">|&gt;</span> </span>
+<span id="cb40-341"><a href="#cb40-341" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> preditos, <span class="at">y =</span> residuos_p)) <span class="sc">+</span></span>
+<span id="cb40-342"><a href="#cb40-342" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb40-343"><a href="#cb40-343" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb40-344"><a href="#cb40-344" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb40-345"><a href="#cb40-345" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Valores Preditos (Comprimento Estimado)"</span>, </span>
+<span id="cb40-346"><a href="#cb40-346" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Resíduos Padronizados"</span>) <span class="sc">+</span></span>
+<span id="cb40-347"><a href="#cb40-347" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb40-348"><a href="#cb40-348" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-349"><a href="#cb40-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-350"><a href="#cb40-350" aria-hidden="true" tabindex="-1"></a>Como interpretar o gráfico?</span>
+<span id="cb40-351"><a href="#cb40-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-352"><a href="#cb40-352" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Cenário Ideal (Homocedasticidade)</span><span class="co">]</span>{.underline}: Os pontos pretos devem estar espalhados de forma aleatória e uniforme acima e abaixo da linha horizontal vermelha (@fig-homo), formando uma "banda" ou "retângulo" de largura constante. A linha azul deve ficar o mais reta e horizontal possível perto do zero (@fig-homo).</span>
+<span id="cb40-353"><a href="#cb40-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-354"><a href="#cb40-354" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Problema (Heterocedasticidade)</span><span class="co">]</span>{.underline}: Se a dispersão dos pontos começar bem estreita de um lado e abrir como um funil, cone ou megafone à medida que os valores preditos aumentam, a homocedasticidade foi violada.</span>
+<span id="cb40-355"><a href="#cb40-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-356"><a href="#cb40-356" aria-hidden="true" tabindex="-1"></a>Concluindo a avaliação visual:</span>
+<span id="cb40-357"><a href="#cb40-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-358"><a href="#cb40-358" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Dispersão em Banda Uniforme</span><span class="co">]</span>{.underline}: A "nuvem" de pontos pretos está distribuída de forma homogênea e retangular ao longo de todo o eixo *x* (desde os valores estimados de 80 cm até 100 cm). Não há nenhuma evidência daquele formato clássico de "funil", "megafone" ou "cone" que denunciaria a heterocedasticidade.</span>
+<span id="cb40-359"><a href="#cb40-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-360"><a href="#cb40-360" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Amplitude Constante</span><span class="co">]</span>{.underline}: A variabilidade vertical dos pontos (no eixo *y*) se mantém quase idêntica do início ao fim do gráfico, flutuando estavelmente dentro do intervalo seguro de $-2$ a $+2$ desvios-padrão.</span>
+<span id="cb40-361"><a href="#cb40-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-362"><a href="#cb40-362" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Linha de Tendência Estável</span><span class="co">]</span>{.underline}: A linha azul oscila de forma muito sutil e comportada em torno da linha tracejada vermelha do zero. Essa leve oscilação é perfeitamente normal e esperada devido à flutuação de pequenas amostras, não indicando nenhum desvio sistemático de variância ou falta de linearidade.</span>
+<span id="cb40-363"><a href="#cb40-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-364"><a href="#cb40-364" aria-hidden="true" tabindex="-1"></a>Completando a avaliação visual, o teste estatístico mais amplamente utilizado para regressão linear é o **Teste de Breusch-Pagan**. Esse teste não é nativo do R, mas está presente no pacote <span class="in">`lmtest`</span> <span class="co">[</span><span class="ot">@hothorn2015lmtest</span><span class="co">]</span>:</span>
+<span id="cb40-365"><a href="#cb40-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-368"><a href="#cb40-368" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-369"><a href="#cb40-369" aria-hidden="true" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">bptest</span>(mod_reg)</span>
+<span id="cb40-370"><a href="#cb40-370" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-371"><a href="#cb40-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-372"><a href="#cb40-372" aria-hidden="true" tabindex="-1"></a>A homocedasticidade do modelo foi avaliada visualmente por meio do gráfico de dispersão dos resíduos padronizados versus os valores preditos, mostrando uma distribuição uniforme da variância. O pressuposto foi confirmado formalmente pelo teste de Breusch-Pagan ($\chi^2 = \text{0.049988}$, $p &gt; 0,05$).</span>
+<span id="cb40-373"><a href="#cb40-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-374"><a href="#cb40-374" aria-hidden="true" tabindex="-1"></a><span class="fu">### Independência dos resíduos {#sec-dw}</span></span>
+<span id="cb40-375"><a href="#cb40-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-376"><a href="#cb40-376" aria-hidden="true" tabindex="-1"></a>Os resíduos no modelo devem ser independentes, ou seja, não devem ser correlacionados entre si. Para verificar isso, pode-se executar o *teste Durbin-Watson* - <span class="in">`teste dw`</span> <span class="co">[</span><span class="ot">@durbin1950testing</span><span class="co">]</span>, utilizando a função <span class="in">`car::durbinWatsonTest()`</span> do pacote <span class="in">`car`</span>. O teste retorna um valor entre 0 e 4. Um valor maior que 2 indica uma correlação negativa entre resíduos adjacentes, enquanto um valor menor que 2 indica uma correlação positiva. Se o valor for dois, é provável que exista independência. Existe uma sugestão de que valores abaixo de 1 ou mais de 3 são um motivo definitivo de preocupação <span class="co">[</span><span class="ot">@field2012regression</span><span class="co">]</span>. É importante mencionar que o teste tem como pressuposto a normalidade dos dados.</span>
+<span id="cb40-377"><a href="#cb40-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-380"><a href="#cb40-380" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-381"><a href="#cb40-381" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">durbinWatsonTest</span>(mod_reg)</span>
+<span id="cb40-382"><a href="#cb40-382" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-383"><a href="#cb40-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-384"><a href="#cb40-384" aria-hidden="true" tabindex="-1"></a>Na saída do teste o valor *p* <span class="sc">\&gt;</span> 0,05 e a estatística DW é igual a 2,2, não se rejeita a hipótese nula de independência (rho = 0).</span>
+<span id="cb40-385"><a href="#cb40-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-386"><a href="#cb40-386" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tamanho amostral na regressão</span></span>
+<span id="cb40-387"><a href="#cb40-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-388"><a href="#cb40-388" aria-hidden="true" tabindex="-1"></a>O tamanho da amostra deve ser suficiente para suportar o modelo de regressão. É importante coletar dados suficientes para obter um modelo de regressão confiável. O tamanho da amostra necessário para suportar um modelo depende do valor do coeficiente de correlação do modelo (no caso da correlação linear simples é o *r* de Pearson) e do número de variáveis incluídas.</span>
+<span id="cb40-389"><a href="#cb40-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-390"><a href="#cb40-390" aria-hidden="true" tabindex="-1"></a>A @tbl-samplesize mostra o número de participantes necessários em modelos com 1 a 4 preditores independentes. Como se observa, o requisito de tamanho da amostra aumenta com o número de variáveis preditoras <span class="co">[</span><span class="ot">@peat2014regression</span><span class="co">]</span>.</span>
+<span id="cb40-391"><a href="#cb40-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-394"><a href="#cb40-394" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-395"><a href="#cb40-395" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-samplesize</span></span>
+<span id="cb40-396"><a href="#cb40-396" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Tamanho amostral para regressão de acordo com o r de Pearson e o número de preditores"</span></span>
+<span id="cb40-397"><a href="#cb40-397" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: FALSE</span></span>
+<span id="cb40-398"><a href="#cb40-398" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: FALSE</span></span>
+<span id="cb40-399"><a href="#cb40-399" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: FALSE</span></span>
+<span id="cb40-400"><a href="#cb40-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-401"><a href="#cb40-401" aria-hidden="true" tabindex="-1"></a>r_pearson <span class="ot">&lt;-</span><span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.3</span>,<span class="fl">0.4</span>)</span>
+<span id="cb40-402"><a href="#cb40-402" aria-hidden="true" tabindex="-1"></a>uma <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">190</span>, <span class="dv">80</span>, <span class="dv">45</span>)</span>
+<span id="cb40-403"><a href="#cb40-403" aria-hidden="true" tabindex="-1"></a>duas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">230</span>, <span class="dv">100</span>, <span class="dv">55</span>)</span>
+<span id="cb40-404"><a href="#cb40-404" aria-hidden="true" tabindex="-1"></a>tres <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">265</span>, <span class="dv">115</span>, <span class="dv">65</span>)</span>
+<span id="cb40-405"><a href="#cb40-405" aria-hidden="true" tabindex="-1"></a>quatro <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">290</span>, <span class="dv">125</span>, <span class="dv">70</span>)</span>
+<span id="cb40-406"><a href="#cb40-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-407"><a href="#cb40-407" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(r_pearson, uma, duas, tres, quatro)</span>
+<span id="cb40-408"><a href="#cb40-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-409"><a href="#cb40-409" aria-hidden="true" tabindex="-1"></a>minha_tab <span class="ot">&lt;-</span> <span class="fu">flextable</span>(df) <span class="sc">|&gt;</span></span>
+<span id="cb40-410"><a href="#cb40-410" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_header_labels</span>(</span>
+<span id="cb40-411"><a href="#cb40-411" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_pearson =</span> <span class="st">"r de Pearson"</span>,</span>
+<span id="cb40-412"><a href="#cb40-412" aria-hidden="true" tabindex="-1"></a>    <span class="at">uma =</span> <span class="st">"Uma"</span>,</span>
+<span id="cb40-413"><a href="#cb40-413" aria-hidden="true" tabindex="-1"></a>    <span class="at">duas =</span> <span class="st">"Duas"</span>,</span>
+<span id="cb40-414"><a href="#cb40-414" aria-hidden="true" tabindex="-1"></a>    <span class="at">tres =</span> <span class="st">"Três"</span>,</span>
+<span id="cb40-415"><a href="#cb40-415" aria-hidden="true" tabindex="-1"></a>    <span class="at">quatro =</span> <span class="st">"Quatro"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-416"><a href="#cb40-416" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autofit</span>() <span class="sc">|&gt;</span></span>
+<span id="cb40-417"><a href="#cb40-417" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_header_row</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">""</span>, <span class="st">"Número de Variáveis Preditoras"</span>),</span>
+<span id="cb40-418"><a href="#cb40-418" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colwidths =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">4</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb40-419"><a href="#cb40-419" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_booktabs</span>() <span class="sc">|&gt;</span></span>
+<span id="cb40-420"><a href="#cb40-420" aria-hidden="true" tabindex="-1"></a>  <span class="fu">width</span>(<span class="at">j =</span> <span class="dv">1</span>, <span class="at">width =</span> <span class="fl">1.5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-421"><a href="#cb40-421" aria-hidden="true" tabindex="-1"></a>  <span class="fu">width</span>(<span class="at">j =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">width =</span> <span class="fl">1.5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-422"><a href="#cb40-422" aria-hidden="true" tabindex="-1"></a>  <span class="fu">align</span>(<span class="at">align =</span> <span class="st">"center"</span>, <span class="at">part =</span> <span class="st">"header"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-423"><a href="#cb40-423" aria-hidden="true" tabindex="-1"></a>  <span class="fu">align</span>(<span class="at">align =</span> <span class="st">"center"</span>, <span class="at">part =</span> <span class="st">"body"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-424"><a href="#cb40-424" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bold</span>(<span class="at">part =</span> <span class="st">"header"</span>) </span>
+<span id="cb40-425"><a href="#cb40-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-426"><a href="#cb40-426" aria-hidden="true" tabindex="-1"></a>minha_tab</span>
+<span id="cb40-427"><a href="#cb40-427" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-428"><a href="#cb40-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-429"><a href="#cb40-429" aria-hidden="true" tabindex="-1"></a>Existem muitas regras práticas, sugerindo o tamanho da amostra. Uma delas, diz que se deve ter 10 a 15 casos por variável preditora no modelo. Entretanto, essas regras podem ser duvidosas e o melhor é calcular o tamanho amostral baseado no tamanho do efeito, usando, por exemplo o site <span class="co">[</span><span class="ot">*StatToDo*</span><span class="co">](https://www.statstodo.com/SSizMulReg.php)</span> ou com o software *GPower* 3.1.9.7 <span class="co">[</span><span class="ot">@faul2007g</span><span class="co">]</span>.</span>
+<span id="cb40-430"><a href="#cb40-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-431"><a href="#cb40-431" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretação do modelo de regressão linear simples</span></span>
+<span id="cb40-432"><a href="#cb40-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-433"><a href="#cb40-433" aria-hidden="true" tabindex="-1"></a>O modelo linear já foi realizado (@sec-residuos) e será repetido aqui para facilitar a visualização. A função <span class="in">`summary()`</span> imprime o resumo do modelo:</span>
+<span id="cb40-434"><a href="#cb40-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-437"><a href="#cb40-437" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-438"><a href="#cb40-438" aria-hidden="true" tabindex="-1"></a>mod_reg <span class="ot">&lt;-</span> <span class="fu">lm</span> (comp <span class="sc">~</span> idade, dados)</span>
+<span id="cb40-439"><a href="#cb40-439" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span> (mod_reg)</span>
+<span id="cb40-440"><a href="#cb40-440" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-441"><a href="#cb40-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-442"><a href="#cb40-442" aria-hidden="true" tabindex="-1"></a>A saída da função <span class="in">`summary()`</span>, primeiro apresenta como o modelo foi obtido e, em seguida, resume os resíduos do modelo. Por último, tem-se os <span class="in">`Coeficientes`</span>:</span>
+<span id="cb40-443"><a href="#cb40-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-444"><a href="#cb40-444" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>As estimativas (*Estimate*) para os parâmetros do modelo - o valor do intercepto *y* (neste caso, 61,44) e o efeito estimado da idade sobre o comprimento (1,1)- significam que para cada unidade de aumento na idade se espera um aumento de 1,1 cm no comprimento.</span>
+<span id="cb40-445"><a href="#cb40-445" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>O erro padrão dos valores estimados (*Std. Error*).</span>
+<span id="cb40-446"><a href="#cb40-446" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>A estatística de teste (*t value*)</span>
+<span id="cb40-447"><a href="#cb40-447" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>O valor *P* (Pr (\&gt;\| t \|)), também conhecido como a probabilidade de encontrar a estatística *t* fornecida se a hipótese nula de nenhuma correlação for verdadeira.\</span>
+<span id="cb40-448"><a href="#cb40-448" aria-hidden="true" tabindex="-1"></a><span class="ss">5.  </span>As três linhas finais são os diagnósticos do modelo - o mais importante a observar é o valor *p* ($2,2\times 10^{-16}$), que indica se o modelo se ajusta bem aos dados.</span>
+<span id="cb40-449"><a href="#cb40-449" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-450"><a href="#cb40-450" aria-hidden="true" tabindex="-1"></a>A partir desses resultados, pode-se dizer que existe uma correlação positiva significativa entre idade e comprimento (valor P <span class="sc">\&lt;</span> 0,001), com um aumento de 1,1 cm no comprimento para cada aumento de 1 mês na idade , possibilitando a previsão do comprimento da criança conhecendo a idade.</span>
+<span id="cb40-451"><a href="#cb40-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-452"><a href="#cb40-452" aria-hidden="true" tabindex="-1"></a>Estes dados são empregados para formular a equação do modelo de regressão da seguinte maneira:</span>
+<span id="cb40-453"><a href="#cb40-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-454"><a href="#cb40-454" aria-hidden="true" tabindex="-1"></a>$$\hat {y} = 61,44 + 1,1 x$$</span>
+<span id="cb40-455"><a href="#cb40-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-456"><a href="#cb40-456" aria-hidden="true" tabindex="-1"></a>O erro padrão das estimativas são fornecidos. Esses dados permitem calcular o IC95%. Ou pode-se usar a função <span class="in">`confint()`</span> do pacote <span class="in">`stats`</span>, que será colocada dentro da função <span class="in">`round()`</span> para arredondar os valores até um dígito.</span>
+<span id="cb40-457"><a href="#cb40-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-460"><a href="#cb40-460" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-461"><a href="#cb40-461" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span> (<span class="fu">confint</span> (mod_reg, <span class="at">level =</span> <span class="fl">0.95</span>), <span class="dv">1</span>)</span>
+<span id="cb40-462"><a href="#cb40-462" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-463"><a href="#cb40-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-464"><a href="#cb40-464" aria-hidden="true" tabindex="-1"></a>Dessa forma, é possível prever que uma criança de 30 meses, de acordo com o modelo, terá o seguinte comprimento:</span>
+<span id="cb40-465"><a href="#cb40-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-468"><a href="#cb40-468" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-469"><a href="#cb40-469" aria-hidden="true" tabindex="-1"></a>comp_30m <span class="ot">&lt;-</span> <span class="fl">61.4</span> <span class="sc">+</span> <span class="fl">1.1</span> <span class="sc">*</span> <span class="dv">30</span></span>
+<span id="cb40-470"><a href="#cb40-470" aria-hidden="true" tabindex="-1"></a>comp_30m</span>
+<span id="cb40-471"><a href="#cb40-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-472"><a href="#cb40-472" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-473"><a href="#cb40-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-476"><a href="#cb40-476" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-477"><a href="#cb40-477" aria-hidden="true" tabindex="-1"></a>lim.sup <span class="ot">&lt;-</span> <span class="fl">64.2</span> <span class="sc">+</span> <span class="fl">1.2</span><span class="sc">*</span><span class="dv">30</span></span>
+<span id="cb40-478"><a href="#cb40-478" aria-hidden="true" tabindex="-1"></a>lim.inf <span class="ot">&lt;-</span> <span class="fl">58.7</span> <span class="sc">+</span> <span class="fl">1.0</span><span class="sc">*</span><span class="dv">30</span></span>
+<span id="cb40-479"><a href="#cb40-479" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> (<span class="fu">c</span>(lim.inf, lim.sup))</span>
+<span id="cb40-480"><a href="#cb40-480" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-481"><a href="#cb40-481" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-482"><a href="#cb40-482" aria-hidden="true" tabindex="-1"></a>Ou seja, espera-se que uma criança tenha, aos 30 meses de idade, um comprimento médio de 94,4 cm (IC95%: 88,7-100,2)</span>
+<span id="cb40-483"><a href="#cb40-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-484"><a href="#cb40-484" aria-hidden="true" tabindex="-1"></a><span class="fu">## Visualização dos resultados</span></span>
+<span id="cb40-485"><a href="#cb40-485" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-486"><a href="#cb40-486" aria-hidden="true" tabindex="-1"></a>Será obtido um gráfico de dispersão com a reta de regressão e seu intervalo de confiança de 95% (@fig-resreg). Além disso, adicionou-se a equação do modelo<span class="ot">[^18-regressao-3]</span> de regressão (o R arredondou os valores), juntamente com o coeficiente de determinação $R^{2}$.</span>
+<span id="cb40-487"><a href="#cb40-487" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-488"><a href="#cb40-488" aria-hidden="true" tabindex="-1"></a><span class="ot">[^18-regressao-3]: </span>Usou a função <span class="in">`stat_regline_equation()`</span> do pacote <span class="in">`ggpubr`</span>.</span>
+<span id="cb40-489"><a href="#cb40-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-492"><a href="#cb40-492" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb40-493"><a href="#cb40-493" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-resreg</span></span>
+<span id="cb40-494"><a href="#cb40-494" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb40-495"><a href="#cb40-495" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb40-496"><a href="#cb40-496" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-height: "70%"</span></span>
+<span id="cb40-497"><a href="#cb40-497" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb40-498"><a href="#cb40-498" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-align: "center"</span></span>
+<span id="cb40-499"><a href="#cb40-499" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Resultado da Regressão Linear"</span></span>
+<span id="cb40-500"><a href="#cb40-500" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-501"><a href="#cb40-501" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span> (dados, <span class="fu">aes</span> (<span class="at">x =</span> idade, <span class="at">y =</span> comp)) <span class="sc">+</span></span>
+<span id="cb40-502"><a href="#cb40-502" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span> (<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb40-503"><a href="#cb40-503" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span> (<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>, <span class="at">color =</span> <span class="st">"tomato"</span>) <span class="sc">+</span></span>
+<span id="cb40-504"><a href="#cb40-504" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_regline_equation</span>(<span class="at">label.y =</span> <span class="dv">100</span>, <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">after_stat</span>(eq.label))) <span class="sc">+</span></span>
+<span id="cb40-505"><a href="#cb40-505" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_regline_equation</span>(<span class="at">label.y =</span> <span class="dv">99</span>,  <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">after_stat</span>(rr.label))) <span class="sc">+</span></span>
+<span id="cb40-506"><a href="#cb40-506" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span> () <span class="sc">+</span></span>
+<span id="cb40-507"><a href="#cb40-507" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span> (<span class="st">"Idade (meses)"</span>) <span class="sc">+</span></span>
+<span id="cb40-508"><a href="#cb40-508" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span> (<span class="st">"Comprimento(cm)"</span>) <span class="sc">+</span></span>
+<span id="cb40-509"><a href="#cb40-509" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span> (<span class="at">text =</span> <span class="fu">element_text</span> (<span class="at">size =</span> <span class="dv">12</span>))</span>
+<span id="cb40-510"><a href="#cb40-510" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-511"><a href="#cb40-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-512"><a href="#cb40-512" aria-hidden="true" tabindex="-1"></a>No gráfico, o intervalo de previsão médio de 95% em torno da reta de regressão é um intervalo de confiança de 95%, ou seja, a área na qual há 95% de certeza de que a reta de regressão verdadeira se encontra <span class="co">[</span><span class="ot">@altman1988statistics</span><span class="co">]</span>. Esta banda de intervalo é levemente curvada porque os erros na estimativa do intercepto e da inclinação são incluídos em adição ao erro na previsão da variável desfecho.</span>
+<span id="cb40-513"><a href="#cb40-513" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-514"><a href="#cb40-514" aria-hidden="true" tabindex="-1"></a>Se for observado, o IC95% da reta de regressão obtida pelo <span class="in">`ggplot2`</span> difere um pouco do IC95% da função <span class="in">`confint()`</span>. Isto ocorre porque:</span>
+<span id="cb40-515"><a href="#cb40-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-516"><a href="#cb40-516" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>quando se usa <span class="in">`geom_smooth(method = "lm", se = TRUE)`</span>, o intervalo de confiança gerado é baseado na incerteza da **previsão média** da regressão. Ou seja, ele mostra a faixa onde se espera que a média da variável dependente (<span class="in">`comp`</span>) esteja para um determinado valor da variável independente (<span class="in">`idade`</span>) e\</span>
+<span id="cb40-517"><a href="#cb40-517" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>quando se usa a função <span class="in">`confint()`</span>, ela retorna o intervalo de confiança dos **coeficientes** do modelo de regressão. Ou seja, ela fornece a incerteza associada aos parâmetros estimados (incluindo o intercepto e os coeficientes das variáveis preditoras).</span>
+<span id="cb40-518"><a href="#cb40-518" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-519"><a href="#cb40-519" aria-hidden="true" tabindex="-1"></a>A principal diferença, portanto, é que o intervalo de confiança do <span class="in">`ggplot2`</span> reflete a incerteza da linha de regressão ajustada, enquanto <span class="in">`confint()`</span> fornece a incerteza dos parâmetros do modelo.</span>
+</code><button title="Copiar para a área de transferência" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
