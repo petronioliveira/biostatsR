@@ -59,6 +59,7 @@ book:
         - 21-testesDiag.qmd
         - 22-medidasOcorrencia.qmd
         - 23-sobrevida.qmd
+        - 24-reglogbin.qmd
 
 bibliography: referencias.bib
 csl: vancouver.csl
