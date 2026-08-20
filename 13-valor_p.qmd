@@ -96,7 +96,7 @@ Em um gráfico de barras, temos:
 ```{r}
 #| label: fig-moeda6
 #| fig-cap: "Distribuição de 6 lançamentos de uma moeda honesta"
-#| #| out-width: "70%"
+#| out-width: "70%"
 #| out-height: "70%"
 #| fig-align: 'center'
   
@@ -135,7 +135,7 @@ df12 |>
     x = "Número de caras",
     y = "Probabilidade"
   ) +
-  theme_minimal()
+  theme_bw()
 ```
 
 #### Cinquenta lançamentos
@@ -345,7 +345,7 @@ Observe que a **diferença real entre a moeda viciada e a honesta é sempre a me
 Para complementar o valor *p*, devemos sempre reportar uma medida de **tamanho do efeito** (*effect size*) — uma quantidade que descreve a *magnitude* da diferença, independentemente do tamanho da amostra. Para proporções, as medidas mais comuns são:
 
 | Medida | O que representa |
-|----|----|
+|------------------------------------|------------------------------------|
 | Diferença de proporções | $\hat{p} - p_0$ — a mais intuitiva; no exemplo, vale 0,01 |
 | *h* de Cohen | Diferença padronizada entre proporções; $< 0{,}2$ é considerado efeito pequeno [@cohen1992quantitative] |
 | Razão de chances (*odds ratio*) | Quanto maior a chance de um evento em relação ao outro |
